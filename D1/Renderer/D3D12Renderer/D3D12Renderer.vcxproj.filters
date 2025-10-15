@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Pch">
+      <UniqueIdentifier>{e514ae7c-1861-451e-ba26-b19bfbb209c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EntryPoint">
+      <UniqueIdentifier>{54f632a1-1d67-478d-8c05-9f9a2b327b55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{f7144539-f48f-4682-bd50-da00664b6e3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{32c2993e-35ec-4c10-8cf1-8dd692a9066d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{9abfc048-01d9-4f89-a6dc-222aebe3a545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{460390b0-84a5-4f38-9e4a-95f757b1a94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{3892e53a-8641-432d-bb8b-95210ad8ff31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderBody">
+      <UniqueIdentifier>{a99c568d-9b76-48c7-8adb-dd4fb0ed3e55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{19fb2f29-5c3e-4c39-a719-37405c7fb1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderData">
+      <UniqueIdentifier>{e81931ec-9539-491e-8338-0ebd6d53b67b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConstantBufferHelper">
+      <UniqueIdentifier>{bdcb440f-8153-4c07-bd65-852baa84ae04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DescriptorHeapHelper">
+      <UniqueIdentifier>{55e36fdc-b718-4028-b189-de435c5717f1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Pch</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Interface\IRenderer.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Types.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\SimpleMath.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererMacro.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Utils\D3DUtil.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\VertexData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D12Renderer.h">
+      <Filter>RenderBody</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D12ResourceManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshRenderData.h">
+      <Filter>RenderData</Filter>
+    </ClInclude>
+    <ClInclude Include="SkeletalMeshRenderData.h">
+      <Filter>RenderData</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBufferPool.h">
+      <Filter>ConstantBufferHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorPool.h">
+      <Filter>DescriptorHeapHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptorAllocator.h">
+      <Filter>DescriptorHeapHelper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Pch</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\SimpleMath.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utils\D3DUtil.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Common\VertexData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12Renderer.cpp">
+      <Filter>RenderBody</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D12ResourceManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="SkeletalMeshRenderData.cpp">
+      <Filter>RenderData</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshRenderData.cpp">
+      <Filter>RenderData</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBufferPool.cpp">
+      <Filter>ConstantBufferHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorPool.cpp">
+      <Filter>DescriptorHeapHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptorAllocator.cpp">
+      <Filter>DescriptorHeapHelper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Common\SimpleMath.inl">
+      <Filter>Common</Filter>
+    </None>
+    <None Include="packages.config" />
+    <None Include="D3D12Renderer.def">
+      <Filter>RenderBody</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Shaders\Default.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
