@@ -9,14 +9,15 @@ public:
 	virtual ~Game();
 
 	/* Start IEngine Interface */
-	virtual bool __stdcall Init() override;
-	virtual void __stdcall Update() override;
-	virtual void __stdcall Render() override;
-	virtual void __stdcall Release() override;
+	virtual bool Init() override;
+	virtual void Update() override;
+	virtual void Render() override;
+	virtual void Release() override;
 	/* End IEngine Interface */
 
 private:
-	ActorRef m_actor = nullptr;
+	ActorRef m_cameraActor = nullptr;
+	ActorRef m_meshActor = nullptr;
 };
 
 

@@ -154,6 +154,7 @@
     <ClInclude Include="..\Common\SimpleMath.h" />
     <ClInclude Include="..\Common\Types.h" />
     <ClInclude Include="..\Interface\IEngine.h" />
+    <ClInclude Include="CameraScript.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientMacro.h" />
     <ClInclude Include="framework.h" />
@@ -164,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\SimpleMath.cpp" />
+    <ClCompile Include="CameraScript.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="pch.cpp">
@@ -182,6 +184,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shaders\Default.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

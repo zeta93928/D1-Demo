@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "MeshAsset.h"
-#include "../Utils/GeometryHelper.h"
+#include "GeometryHelper.h"
 
 MeshAsset::MeshAsset()
 	: AssetBase(AssetType::Mesh)
@@ -19,6 +19,7 @@ void MeshAsset::GenerateQuad()
 	GeometryHelper::CreateQuad(m_geometry);
 
 	// Renderer 로 부터 StaticMeshRenderData 인스턴스 생성
+	// 주의: 생성한 인스턴스는 소멸자에서 Release() 호출
 	m_staticMeshRenderData = GRenderer->CreateStaticMeshRenderData();
 
 	// CPU 측 데이터를 Renderer DLL 로 넘긴다.

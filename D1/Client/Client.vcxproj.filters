@@ -26,6 +26,12 @@
     <Filter Include="Interface">
       <UniqueIdentifier>{4d9aadf9-81cd-4fab-ac96-e9a93795e237}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scripts">
+      <UniqueIdentifier>{e844f043-814a-4995-89ed-104b9eb47324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{a82453b5-f56b-445e-b584-07b3b82d77c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -58,6 +64,9 @@
     <ClInclude Include="..\Interface\IEngine.h">
       <Filter>Interface</Filter>
     </ClInclude>
+    <ClInclude Include="CameraScript.h">
+      <Filter>Scripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -71,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraScript.cpp">
+      <Filter>Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,5 +102,10 @@
     <None Include="..\Common\SimpleMath.inl">
       <Filter>Common</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shaders\Default.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

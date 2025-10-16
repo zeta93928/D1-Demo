@@ -3,7 +3,7 @@
 #include "StaticMeshRenderData.h"
 #include "DescriptorPool.h"
 #include "DescriptorAllocator.h"
-#include "ConstantBufferPool.h"
+#include "ConstantBufferManager.h"
 
 D3D12Renderer* GRenderer = nullptr;
 
@@ -181,6 +181,11 @@ lb_exit:
 		rtvHandle.Offset(1, m_rtvDescriptorSize);
 	}
 
+	CreateDepthStencil(m_backBufferWidth, m_backBufferHeight);
+
+	// SRV Descriptor Size 계산
+	m_srvDescriptorSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
 	CreateCommandList();
 
 	// Create synchronization objects.
@@ -204,12 +209,8 @@ lb_exit:
 
 	// Constant Buffer Pool 생성
 	{
-		m_constantBufferPool = new ConstantBufferPool;
-
-		// Type 에 따라 Draw 될 오브젝트 갯수 만큼 생성
-		// 위 조건은 Global 과 Mesh 로 나누어 지면 달라짐
-		// @TODO:
-		m_constantBufferPool->Create((uint32)D3DUtils::AlignConstantBufferSize(sizeof(GlobalRenderData)), MAX_DRAW_COUNT_PER_FRAME);
+		m_constantBufferManager = new ConstantBufferManager;
+		m_constantBufferManager->CreatePool(MAX_DRAW_COUNT_PER_FRAME);
 	}
 	
 	bResult = TRUE;
@@ -299,6 +300,11 @@ void __stdcall D3D12Renderer::Present()
 	Fence();
 
 	WaitForFenceValue();
+
+	// Constant Buffer 관련 Descriptor Heap 초기화
+	// 매 프래임 변경되기 때문
+	m_constantBufferManager->ResetPool();
+	m_descriptorPool->Reset();
 }
 
 bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
@@ -323,6 +329,8 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 		m_renderTargets[n]->Release();
 		m_renderTargets[n] = nullptr;
 	}
+
+	CleanUpDepthStencil();
 
 	if (FAILED(m_swapChain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, m_dwSwapChainFlags)))
 	{
@@ -356,7 +364,7 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 	return true;
 }
 
-IStaicMeshRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
+IStaticMeshRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
 {
 	StaticMeshRenderData* data = new StaticMeshRenderData;
 	assert(data);
@@ -370,7 +378,7 @@ ISkeletalMeshRenderData* __stdcall D3D12Renderer::CreateSkeletalMeshRenderData()
     return nullptr;
 }
 
-void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IStaicMeshRenderData* renderData)
+void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IStaticMeshRenderData* renderData)
 {
 	if (nullptr == renderData)
 	{
@@ -396,10 +404,10 @@ void D3D12Renderer::CleanUp()
 {
 	WaitForFenceValue();
 
-	if (m_constantBufferPool)
+	if (m_constantBufferManager)
 	{
-		delete m_constantBufferPool;
-		m_constantBufferPool = nullptr;
+		delete m_constantBufferManager;
+		m_constantBufferManager = nullptr;
 	}
 
 	if (m_descriptorPool)
@@ -414,7 +422,7 @@ void D3D12Renderer::CleanUp()
 		m_resourceManager = nullptr;
 	}
 
-	CleanupDescriptorHeap();
+	CleanUpDepthStencil();
 
 	for (DWORD i = 0; i < SWAP_CHAIN_FRAME_COUNT; i++)
 	{
@@ -424,6 +432,9 @@ void D3D12Renderer::CleanUp()
 			m_renderTargets[i] = nullptr;
 		}
 	}
+
+	CleanUpDescriptorHeap();
+
 	if (m_swapChain)
 	{
 		m_swapChain->Release();
@@ -436,9 +447,9 @@ void D3D12Renderer::CleanUp()
 		m_pCommandQueue = nullptr;
 	}
 
-	CleanupCommandList();
+	CleanUpCommandList();
 
-	CleanupFence();
+	CleanUpFence();
 
 
 	if (m_device)
@@ -509,6 +520,15 @@ bool D3D12Renderer::CreateDepthStencil(uint32 width, uint32 height)
 	return true;
 }
 
+void D3D12Renderer::CleanUpDepthStencil()
+{
+	if (m_depthStencil)
+	{
+		m_depthStencil->Release();
+		m_depthStencil = nullptr;
+	}
+}
+
 void D3D12Renderer::CreateFence()
 {
 	// Create synchronization objects and wait until assets have been uploaded to the GPU.
@@ -523,7 +543,7 @@ void D3D12Renderer::CreateFence()
 	m_hFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
-void D3D12Renderer::CleanupFence()
+void D3D12Renderer::CleanUpFence()
 {
 	if (m_hFenceEvent)
 	{
@@ -555,7 +575,7 @@ void D3D12Renderer::CreateCommandList()
 	m_cmdList->Close();
 }
 
-void D3D12Renderer::CleanupCommandList()
+void D3D12Renderer::CleanUpCommandList()
 {
 	if (m_cmdList)
 	{
@@ -602,8 +622,14 @@ bool D3D12Renderer::CreateDescriptorHeap()
 	return true;
 }
 
-void D3D12Renderer::CleanupDescriptorHeap()
+void D3D12Renderer::CleanUpDescriptorHeap()
 {
+	if (m_dsvHeap)
+	{
+		m_dsvHeap->Release();
+		m_dsvHeap = nullptr;
+	}
+
 	if (m_rtvHeap)
 	{
 		m_rtvHeap->Release();

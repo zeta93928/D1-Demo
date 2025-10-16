@@ -34,6 +34,8 @@ private:
 
 	static LRESULT CALLBACK WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 
+	void UpdateGlobalData();
+
 private:
 	GameDesc m_gameDesc = {};
 };

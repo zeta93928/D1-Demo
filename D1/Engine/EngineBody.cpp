@@ -90,6 +90,9 @@ void EngineBody::Tick()
 	GRenderer->BeginRender();
 	{
 		m_gameDesc.app->Update();
+		{
+			UpdateGlobalData();
+		}
 		m_gameDesc.app->Render();
 	}
 	GRenderer->EndRender();
@@ -150,6 +153,13 @@ LRESULT EngineBody::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 	switch (message)
 	{
 	case WM_SIZE:
+		if(GRenderer) 
+		{
+			uint32 width = LOWORD(lParam);
+			uint32 height = HIWORD(lParam);
+			GRenderer->UpdateWindowSize(width, height);
+			CameraComponent::UpdateWindowSize(width, height);
+		}
 		break;
 	case WM_CLOSE:
 	case WM_DESTROY:
@@ -159,4 +169,15 @@ LRESULT EngineBody::WndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPa
 		return ::DefWindowProc(handle, message, wParam, lParam);
 	}
 	return ::DefWindowProc(handle, message, wParam, lParam);
+}
+
+void EngineBody::UpdateGlobalData()
+{
+	// 카메라 정보 Renderer 에 업데이트
+	GlobalRenderData globalData = {};
+	globalData.view = CameraComponent::sm_viewMat;
+	globalData.proj = CameraComponent::sm_projMat;
+	globalData.viewInv = CameraComponent::sm_viewMat.Invert();
+	globalData.viewProj = globalData.view * globalData.proj;
+	RenderProxy::Get().EnqueueGlobalData(globalData);
 }

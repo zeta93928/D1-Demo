@@ -165,6 +165,7 @@
     <ClInclude Include="..\..\Common\VertexData.h" />
     <ClInclude Include="..\..\Interface\IRenderer.h" />
     <ClInclude Include="..\Utils\D3DUtil.h" />
+    <ClInclude Include="ConstantBufferManager.h" />
     <ClInclude Include="ConstantBufferPool.h" />
     <ClInclude Include="D3D12Renderer.h" />
     <ClInclude Include="D3D12ResourceManager.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\..\Common\SimpleMath.cpp" />
     <ClCompile Include="..\..\Common\VertexData.cpp" />
     <ClCompile Include="..\Utils\D3DUtil.cpp" />
+    <ClCompile Include="ConstantBufferManager.cpp" />
     <ClCompile Include="ConstantBufferPool.cpp" />
     <ClCompile Include="D3D12Renderer.cpp" />
     <ClCompile Include="D3D12ResourceManager.cpp" />
@@ -210,6 +212,13 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">fxc %(FullPath) /T vs_5_0 /E VSMain  /Fc %(FileName).vsm</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">fxc %(FullPath) /T vs_5_0 /E VSMain  /Fc %(FileName).vsm</Command>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

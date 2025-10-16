@@ -13,9 +13,13 @@ public:
 private:
 	void UpdateMatrix();
 
+	friend class EngineBody;
+	static void UpdateWindowSize(uint32 width, uint32 height);
+
 public:
 	static Matrix sm_viewMat;
 	static Matrix sm_projMat;
+	static float sm_aspect;
 
 private:
 	Matrix m_viewMat = Matrix::Identity;
@@ -24,7 +28,6 @@ private:
 	float m_near = 1.f;
 	float m_far = 1000.f;
 	float m_fov = DirectX::XM_PI / 4.f;
-	float m_aspect = 1.0f;
 
 	using Super = ComponentBase;
 };

@@ -11,3 +11,6 @@
 #include "EngineMacro.h"
 #include "EngineTypes.h"
 #include "EngineBody.h"
+#include "SceneComponent.h"
+#include "CameraComponent.h"
+#include "RenderProxy.h"

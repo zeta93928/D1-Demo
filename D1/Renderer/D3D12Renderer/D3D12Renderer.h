@@ -8,7 +8,7 @@ enum : uint8
 class D3D12ResourceManager;
 class DescriptorPool;
 class DescriptorAllocator;
-class ConstantBufferPool;
+class ConstantBufferManager;
 
 class D3D12Renderer : public IRenderer
 {
@@ -25,30 +25,39 @@ public:
 
 	virtual bool __stdcall UpdateWindowSize(uint32 width, uint32 height) override;
 
-	IStaicMeshRenderData* __stdcall CreateStaticMeshRenderData() override;
+	IStaticMeshRenderData* __stdcall CreateStaticMeshRenderData() override;
 	ISkeletalMeshRenderData* __stdcall CreateSkeletalMeshRenderData() override;
 
-	virtual void __stdcall RenderStaticMeshRenderData(IStaicMeshRenderData* renderData) override;
+	virtual void __stdcall RenderStaticMeshRenderData(IStaticMeshRenderData* renderData) override;
 	virtual void __stdcall RenderSkeletalMeshRenderData() override;
 
-	virtual void __stdcall SetGlobalRenderData(GlobalRenderData* renderData) override;
+	virtual void __stdcall SetGlobalRenderData(GlobalRenderData* globalData) override;
 
 public:
 	ID3D12Device5* GetDevice() { return m_device; }
 	D3D12ResourceManager* GetResourceManager() { return m_resourceManager; }
+	DescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
 	const GlobalRenderData& GetGlobalRenderData() { return m_globalRenderData; }
+
+	uint32 GetSRVDescriptorSize() { return m_srvDescriptorSize; }
+	uint32 GetRTVDescriptorSize() { return m_rtvDescriptorSize; }
+	uint32 GetDSVDescriptorSize() { return m_dsvDescriptorSize; }
+	
+	// 매니저로 관리 필요
+	ConstantBufferManager* GetConstantBufferManager() { return m_constantBufferManager; }
 
 private:
 	void CleanUp();
 
 	bool CreateDepthStencil(uint32 width, uint32 height);
+	void CleanUpDepthStencil();
 
 	void CreateFence();
-	void CleanupFence();
+	void CleanUpFence();
 	void CreateCommandList();
-	void CleanupCommandList();
+	void CleanUpCommandList();
 	bool CreateDescriptorHeap();
-	void CleanupDescriptorHeap();
+	void CleanUpDescriptorHeap();
 
 	UINT64 Fence();
 	void WaitForFenceValue();
@@ -78,11 +87,15 @@ private:
 
 	ID3D12Resource* m_renderTargets[SWAP_CHAIN_FRAME_COUNT] = {};
 	ID3D12Resource* m_depthStencil = nullptr;
+
 	ID3D12DescriptorHeap* m_rtvHeap = nullptr;
 	ID3D12DescriptorHeap* m_dsvHeap = nullptr;
 	ID3D12DescriptorHeap* m_pSRVHeap = nullptr;
+
 	uint32 m_rtvDescriptorSize = 0;
 	uint32 m_dsvDescriptorSize = 0;
+	uint32 m_srvDescriptorSize = 0;
+
 	UINT	m_dwSwapChainFlags = 0;
 	UINT	m_renderTargetIndex = 0;
 	HANDLE	m_hFenceEvent = nullptr;
@@ -92,7 +105,7 @@ private:
 	D3D12ResourceManager* m_resourceManager = nullptr;
 	DescriptorPool* m_descriptorPool = nullptr;
 	DescriptorAllocator* m_descriptorAllocator = nullptr;
-	ConstantBufferPool* m_constantBufferPool = nullptr;
+	ConstantBufferManager* m_constantBufferManager = nullptr;
 	//~End Renderer 자원(CB, SRV 등...) Manager
 
 	GlobalRenderData m_globalRenderData = {};

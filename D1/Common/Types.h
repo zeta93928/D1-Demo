@@ -2,6 +2,7 @@
 
 #include "SimpleMath.h"
 
+// Type
 using int8 = __int8;
 using int16 = __int16;
 using int32 = __int32;
@@ -20,9 +21,14 @@ using Quaternion = DirectX::SimpleMath::Quaternion;
 
 using CREATE_INSTANCE_FUNC = bool(__stdcall*)(void*);
 
+// Struct
+struct TransformRenderData
+{
+	Matrix world;
+};
+
 struct GlobalRenderData
 {
-	Matrix world; // 이후 제거
 	Matrix view;
 	Matrix proj;
 	Matrix viewProj;

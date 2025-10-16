@@ -123,7 +123,7 @@ HRESULT D3D12ResourceManager::CreateIndexBuffer(DWORD dwIndexNum, D3D12_INDEX_BU
 	D3D12_INDEX_BUFFER_VIEW	IndexBufferView = {};
 	ID3D12Resource* pIndexBuffer = nullptr;
 	ID3D12Resource* pUploadBuffer = nullptr;
-	UINT		IndexBufferSize = sizeof(WORD) * dwIndexNum;
+	UINT		IndexBufferSize = sizeof(uint32) * dwIndexNum;
 
 	// create vertexbuffer for rendering
 	hr = DEVICE->CreateCommittedResource(
@@ -190,7 +190,7 @@ HRESULT D3D12ResourceManager::CreateIndexBuffer(DWORD dwIndexNum, D3D12_INDEX_BU
 
 	// Initialize the vertex buffer view.
 	IndexBufferView.BufferLocation = pIndexBuffer->GetGPUVirtualAddress();
-	IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
+	IndexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	IndexBufferView.SizeInBytes = IndexBufferSize;
 
 	*pOutIndexBufferView = IndexBufferView;

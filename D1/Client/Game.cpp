@@ -14,32 +14,43 @@ Game::~Game()
 	
 }
 
-bool __stdcall Game::Init()
+bool Game::Init()
 {
-	// Mesh Asset »ý¼º
-	MeshAssetRef m1 = MakeShared<MeshAsset>();
-	m1->GenerateQuad();
-
-	m_actor = MakeShared<Actor>();
-	m_actor->AddComponent(MakeShared<StaticMeshComponent>());
+	// Camera Actor
 	{
-		m_actor->GetStaticMeshComponent()->SetMeshAsset(m1);
+		m_cameraActor = MakeShared<Actor>();
+		m_cameraActor->GetOrAddSceneComponent()->SetPosition(Vector3(0.f, 0.f, -10.f));
+		m_cameraActor->AddComponent(MakeShared<CameraComponent>());
+	}
+
+	// Mesh Actor
+	{
+		MeshAssetRef m1 = MakeShared<MeshAsset>();
+		m1->GenerateCube();
+
+		m_meshActor = MakeShared<Actor>();
+		m_meshActor->GetOrAddSceneComponent();
+		m_meshActor->AddComponent(MakeShared<StaticMeshComponent>());
+		{
+			m_meshActor->GetStaticMeshComponent()->SetMeshAsset(m1);
+		}
 	}
 
 	return true;
 }
  
-void __stdcall Game::Update()
+void Game::Update()
 {
-	m_actor->Update();
+	m_cameraActor->Update();
+	m_meshActor->Update();
 }
 
-void __stdcall Game::Render()
+void Game::Render()
 {
 	
 }
 
-void __stdcall Game::Release()
+void Game::Release()
 {
 	delete this;
 }

@@ -55,12 +55,6 @@
     <ClInclude Include="..\Utils\FileUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\Utils\Geometry.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Utils\GeometryHelper.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>Component</Filter>
     </ClInclude>
@@ -72,6 +66,15 @@
     </ClInclude>
     <ClInclude Include="CameraComponent.h">
       <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryHelper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderProxy.h">
+      <Filter>RenderProxy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -101,6 +104,9 @@
     </Filter>
     <Filter Include="Header">
       <UniqueIdentifier>{35ace005-33b3-465c-a795-e13116fb0a31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderProxy">
+      <UniqueIdentifier>{ba2bc2e3-d8d9-4233-b1e8-9fc189358ec2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -137,12 +143,6 @@
     <ClCompile Include="..\Utils\FileUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\Utils\Geometry.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Utils\GeometryHelper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Component</Filter>
     </ClCompile>
@@ -154,6 +154,15 @@
     </ClCompile>
     <ClCompile Include="CameraComponent.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderProxy.cpp">
+      <Filter>RenderProxy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 
 ID3D12RootSignature* StaticMeshRenderData::sm_RootSig = nullptr;
 ID3D12PipelineState* StaticMeshRenderData::sm_PSO = nullptr;
-DWORD StaticMeshRenderData::m_dwInitRefCount = 0;
+DWORD StaticMeshRenderData::m_refCount = 0;
 
 StaticMeshRenderData::StaticMeshRenderData()
 {
@@ -17,9 +17,9 @@ StaticMeshRenderData::~StaticMeshRenderData()
 bool StaticMeshRenderData::Init()
 {
 	// 이미 StaicMesh 가 instance 화 되어있다면 공유리소스를 재생성하지 않고, 사용 카운트만 올려주고 리턴한다.
-	if (m_dwInitRefCount)
+	if (m_refCount)
 	{
-		m_dwInitRefCount++;
+		m_refCount++;
 
 		return true;
 	}
@@ -35,8 +35,8 @@ bool StaticMeshRenderData::Init()
 		ID3DBlob* error = nullptr;
 
 		CD3DX12_DESCRIPTOR_RANGE ranges[1] = {};
-		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);	// b0 : Constant Buffer View
-		// ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);	// t0 : Shader Resource View(Tex)
+		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 2, 0);	// b0: global, b1: transform
+		// ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);	// t0: texture
 
 		CD3DX12_ROOT_PARAMETER rootParameters[1] = {};
 		rootParameters[0].InitAsDescriptorTable(_countof(ranges), ranges, D3D12_SHADER_VISIBILITY_ALL);
@@ -85,21 +85,21 @@ bool StaticMeshRenderData::Init()
 
 	// Create PSO
 	{
-		ID3DBlob* pVertexShader = nullptr;
-		ID3DBlob* pPixelShader = nullptr;
+		ID3DBlob* vs = nullptr;
+		ID3DBlob* ps = nullptr;
 
 
 #if defined(_DEBUG)
 		// Enable better shader debugging with the graphics debugging tools.
-		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+		uint32 compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #else
-		UINT compileFlags = 0;
+		uint32 compileFlags = 0;
 #endif
-		if (FAILED(D3DCompileFromFile(L"../Shaders/Default.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &pVertexShader, nullptr)))
+		if (FAILED(D3DCompileFromFile(L"../Shaders/Default.hlsl", nullptr, nullptr, "VSMain", "vs_5_0", compileFlags, 0, &vs, nullptr)))
 		{
 			__debugbreak();
 		}
-		if (FAILED(D3DCompileFromFile(L"../Shaders/Default.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &pPixelShader, nullptr)))
+		if (FAILED(D3DCompileFromFile(L"../Shaders/Default.hlsl", nullptr, nullptr, "PSMain", "ps_5_0", compileFlags, 0, &ps, nullptr)))
 		{
 			__debugbreak();
 		}
@@ -109,7 +109,9 @@ bool StaticMeshRenderData::Init()
 		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 		};
 
 
@@ -117,8 +119,8 @@ bool StaticMeshRenderData::Init()
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
 		psoDesc.InputLayout = { inputElementDescs, _countof(inputElementDescs) };
 		psoDesc.pRootSignature = sm_RootSig;
-		psoDesc.VS = CD3DX12_SHADER_BYTECODE(pVertexShader->GetBufferPointer(), pVertexShader->GetBufferSize());
-		psoDesc.PS = CD3DX12_SHADER_BYTECODE(pPixelShader->GetBufferPointer(), pPixelShader->GetBufferSize());
+		psoDesc.VS = CD3DX12_SHADER_BYTECODE(vs->GetBufferPointer(), vs->GetBufferSize());
+		psoDesc.PS = CD3DX12_SHADER_BYTECODE(ps->GetBufferPointer(), ps->GetBufferSize());
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		psoDesc.DepthStencilState.DepthEnable = FALSE;
@@ -133,31 +135,31 @@ bool StaticMeshRenderData::Init()
 			__debugbreak();
 		}
 
-		if (pVertexShader)
+		if (vs)
 		{
-			pVertexShader->Release();
-			pVertexShader = nullptr;
+			vs->Release();
+			vs = nullptr;
 		}
-		if (pPixelShader)
+		if (ps)
 		{
-			pPixelShader->Release();
-			pPixelShader = nullptr;
+			ps->Release();
+			ps = nullptr;
 		}
 	}
 
-	m_dwInitRefCount++;
+	m_refCount++;
 	
 	return true;
 }
 
 void __stdcall StaticMeshRenderData::CreateMesh(void* vertices, uint32 typeSize, uint32 vertexNum, void* indices, uint32 indexNum)
 {
-	if (FAILED(RESOURCE->CreateVertexBuffer(typeSize, vertexNum, &m_vertexBufferView, &m_vertexBuffer, vertices)))
+	if (FAILED(RESOURCE_MANAGER->CreateVertexBuffer(typeSize, vertexNum, &m_vertexBufferView, &m_vertexBuffer, vertices)))
 	{
 		__debugbreak();
 	}
 
-	if (FAILED(RESOURCE->CreateIndexBuffer(indexNum, &m_indexBufferView, &m_indexBuffer, indices)))
+	if (FAILED(RESOURCE_MANAGER->CreateIndexBuffer(indexNum, &m_indexBufferView, &m_indexBuffer, indices)))
 	{
 		__debugbreak();
 	}
@@ -168,6 +170,12 @@ void __stdcall StaticMeshRenderData::CreateMesh(void* vertices, uint32 typeSize,
 void __stdcall StaticMeshRenderData::Release()
 {
 	delete this;
+}
+
+void __stdcall StaticMeshRenderData::SetTransformData(TransformRenderData* transformData)
+{
+	assert(transformData);
+	memcpy(&m_transformData, transformData, sizeof(TransformRenderData));
 }
 
 void StaticMeshRenderData::CleanUp()
@@ -182,14 +190,13 @@ void StaticMeshRenderData::CleanUp()
 		m_indexBuffer->Release();
 		m_indexBuffer = nullptr;
 	}
-
 	
-	if (0 == m_dwInitRefCount)
+	if (0 == m_refCount)
 	{
 		return;
 	}
 
-	uint32 refCount = --m_dwInitRefCount;
+	uint32 refCount = --m_refCount;
 	if (0 == refCount)
 	{
 		if (sm_RootSig)
@@ -205,14 +212,74 @@ void StaticMeshRenderData::CleanUp()
 	}
 }
 
-void StaticMeshRenderData::Draw(ID3D12GraphicsCommandList* pCommandList)
-{
-	// set RootSignature
-	pCommandList->SetGraphicsRootSignature(sm_RootSig);
 
-	pCommandList->SetPipelineState(sm_PSO);
-	pCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pCommandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-	pCommandList->IASetIndexBuffer(&m_indexBufferView);
-	pCommandList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
+void StaticMeshRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
+{
+	// Descriptor Table (Shader visible) 용 
+	// Descriptor Allocator 와 Constant Buffer Pool 로 부터 할당받은 descriptor heap 을 해당 Pool 에 Copy 한다.
+	ID3D12DescriptorHeap* heap = DESC_POOL->GetDecriptorHeap();
+	ConstantBufferPool* global_CB_Pool = CONST_MANAGER->GetConstantBuffer(ConstantBufferType::Global);
+	ConstantBufferPool* transform_CB_Pool = CONST_MANAGER->GetConstantBuffer(ConstantBufferType::Transform);
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle = {};
+
+	if (!DESC_POOL->AllocDescriptorTable(cpuHandle, gpuHandle, DESCRIPTOR_COUNT_FOR_DRAW))
+	{
+		__debugbreak();
+	}
+
+	ContantBufferEntry* cbEntry = nullptr;
+	{
+		// Global Constant Buffer Data
+		{
+			cbEntry = global_CB_Pool->AllocEntry();
+			assert(cbEntry);
+			// Constant Buffer 의 내용을 Write 한다.
+			// Matrix 의 Shader 의 Matrix 규칙에 의해 col major -> row major 로 변경한다.
+			// Transpose() 사용
+			GlobalRenderData* globalCB = (GlobalRenderData*)cbEntry->sysMem;
+			globalCB->view = VIEW_MATRIX.Transpose();
+			globalCB->proj = PROJ_MATRIX.Transpose();
+
+			// Constant Buffer 의 Descriptor 를 Shader visible 용 Descriptor Heap 으로 Copy
+			// Root Signature 에서 설정한 Descriptor Table 과 순서가 동일해야 한다.
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, CB0, SRV_DESC_SIZE);
+			DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		}
+
+		// Transform Constant Buffer Data
+		{
+			cbEntry = transform_CB_Pool->AllocEntry();
+			assert(cbEntry);
+
+			TransformRenderData* transformCB = (TransformRenderData*)cbEntry->sysMem;
+			transformCB->world = m_transformData.world.Transpose();
+
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, CB1, SRV_DESC_SIZE);
+			DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		}
+	}
+
+	// RootSignature 설정
+	cmdList->SetGraphicsRootSignature(sm_RootSig);
+
+	// DescriptorHeap 설정
+	cmdList->SetDescriptorHeaps(1, &heap);
+
+	// PSO 설정
+	cmdList->SetPipelineState(sm_PSO);
+
+	///////////////////////////////////////////////////////////////////////////
+	//	Descriptor Table Bind GPU
+	///////////////////////////////////////////////////////////////////////////
+	{
+		cmdList->SetGraphicsRootDescriptorTable(0, gpuHandle);
+	}
+
+	// Input Assemble and Draw call
+	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	cmdList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+	cmdList->IASetIndexBuffer(&m_indexBufferView);
+	cmdList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
 }

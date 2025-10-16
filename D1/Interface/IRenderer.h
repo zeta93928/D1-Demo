@@ -2,11 +2,12 @@
 
 #include "../Common/Types.h"
 
-struct IStaicMeshRenderData
+struct IStaticMeshRenderData
 {
 	virtual void __stdcall CreateMesh(/* Vertices */ void* vertices, uint32 typeSize, uint32 vertexNum, 
 									  /* Indices */ void* indices, uint32 indexNum) = 0;
 	virtual void __stdcall Release() = 0;
+	virtual void __stdcall SetTransformData(TransformRenderData* transformData) = 0;
 };
 
 struct ISkeletalMeshRenderData
@@ -25,11 +26,11 @@ struct IRenderer
 
 	virtual bool __stdcall	UpdateWindowSize(uint32 width, uint32 height) = 0;
 
-	virtual IStaicMeshRenderData*	 __stdcall	CreateStaticMeshRenderData() = 0;
+	virtual IStaticMeshRenderData*	 __stdcall	CreateStaticMeshRenderData() = 0;
 	virtual ISkeletalMeshRenderData* __stdcall	CreateSkeletalMeshRenderData() = 0;
 
-	virtual void __stdcall	RenderStaticMeshRenderData(IStaicMeshRenderData* renderData) = 0;
+	virtual void __stdcall	RenderStaticMeshRenderData(IStaticMeshRenderData* renderData) = 0;
 	virtual void __stdcall	RenderSkeletalMeshRenderData() = 0;
 
-	virtual void __stdcall	SetGlobalRenderData(GlobalRenderData* renderData) = 0;
+	virtual void __stdcall	SetGlobalRenderData(GlobalRenderData* globalData) = 0;
 };

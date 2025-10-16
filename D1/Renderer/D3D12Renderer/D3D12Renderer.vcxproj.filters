@@ -7,9 +7,6 @@
     <Filter Include="EntryPoint">
       <UniqueIdentifier>{54f632a1-1d67-478d-8c05-9f9a2b327b55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{f7144539-f48f-4682-bd50-da00664b6e3e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Interface">
       <UniqueIdentifier>{32c2993e-35ec-4c10-8cf1-8dd692a9066d}</UniqueIdentifier>
     </Filter>
@@ -25,9 +22,6 @@
     <Filter Include="RenderBody">
       <UniqueIdentifier>{a99c568d-9b76-48c7-8adb-dd4fb0ed3e55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managers">
-      <UniqueIdentifier>{19fb2f29-5c3e-4c39-a719-37405c7fb1e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="RenderData">
       <UniqueIdentifier>{e81931ec-9539-491e-8338-0ebd6d53b67b}</UniqueIdentifier>
     </Filter>
@@ -37,13 +31,16 @@
     <Filter Include="DescriptorHeapHelper">
       <UniqueIdentifier>{55e36fdc-b718-4028-b189-de435c5717f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{19fb2f29-5c3e-4c39-a719-37405c7fb1e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header">
+      <UniqueIdentifier>{f7144539-f48f-4682-bd50-da00664b6e3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Pch</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Headers</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Interface\IRenderer.h">
       <Filter>Interface</Filter>
@@ -55,7 +52,7 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="RendererMacro.h">
-      <Filter>Headers</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="..\Utils\D3DUtil.h">
       <Filter>Utils</Filter>
@@ -67,7 +64,7 @@
       <Filter>RenderBody</Filter>
     </ClInclude>
     <ClInclude Include="D3D12ResourceManager.h">
-      <Filter>Managers</Filter>
+      <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshRenderData.h">
       <Filter>RenderData</Filter>
@@ -83,6 +80,12 @@
     </ClInclude>
     <ClInclude Include="DescriptorAllocator.h">
       <Filter>DescriptorHeapHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Pch</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBufferManager.h">
+      <Filter>Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -105,7 +108,7 @@
       <Filter>RenderBody</Filter>
     </ClCompile>
     <ClCompile Include="D3D12ResourceManager.cpp">
-      <Filter>Managers</Filter>
+      <Filter>Manager</Filter>
     </ClCompile>
     <ClCompile Include="SkeletalMeshRenderData.cpp">
       <Filter>RenderData</Filter>
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="DescriptorAllocator.cpp">
       <Filter>DescriptorHeapHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBufferManager.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

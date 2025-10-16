@@ -160,8 +160,6 @@
     <ClInclude Include="..\Interface\IRenderer.h" />
     <ClInclude Include="..\Utils\CommonUtils.h" />
     <ClInclude Include="..\Utils\FileUtils.h" />
-    <ClInclude Include="..\Utils\Geometry.h" />
-    <ClInclude Include="..\Utils\GeometryHelper.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetBase.h" />
     <ClInclude Include="CameraComponent.h" />
@@ -171,9 +169,12 @@
     <ClInclude Include="EnginePch.h" />
     <ClInclude Include="EngineTypes.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GeometryHelper.h" />
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="MonoBehaviour.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RenderProxy.h" />
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="TextureAsset.h" />
@@ -183,13 +184,13 @@
     <ClCompile Include="..\Common\VertexData.cpp" />
     <ClCompile Include="..\Utils\CommonUtils.cpp" />
     <ClCompile Include="..\Utils\FileUtils.cpp" />
-    <ClCompile Include="..\Utils\Geometry.cpp" />
-    <ClCompile Include="..\Utils\GeometryHelper.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AssetBase.cpp" />
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="ComponentBase.cpp" />
     <ClCompile Include="EngineBody.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GeometryHelper.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoBehaviour.cpp" />
     <ClCompile Include="pch.cpp">
@@ -198,6 +199,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RenderProxy.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="TextureAsset.cpp" />
