@@ -164,6 +164,7 @@
     <ClInclude Include="..\Utils\FileUtils.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="AssetBase.h" />
+    <ClInclude Include="C:\Users\skdfw\Downloads\A-26)+ImGUI\Engine\tinyxml2.h" />
     <ClInclude Include="CameraComponent.h" />
     <ClInclude Include="ComponentBase.h" />
     <ClInclude Include="EngineBody.h" />
@@ -191,6 +192,10 @@
     <ClCompile Include="..\Utils\FileUtils.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="AssetBase.cpp" />
+    <ClCompile Include="C:\Users\skdfw\Downloads\A-26)+ImGUI\Engine\tinyxml2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="CameraComponent.cpp" />
     <ClCompile Include="ComponentBase.cpp" />
     <ClCompile Include="EngineBody.cpp" />

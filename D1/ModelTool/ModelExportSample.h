@@ -1,8 +1,8 @@
 #pragma once
 
-class ModelExporter : public IEngine
+class ModelExportSample : public IEngine
 {
-	virtual ~ModelExporter() {}
+	virtual ~ModelExportSample() {}
 	virtual bool __stdcall Init() override;
 	virtual void __stdcall Update() override;
 	virtual void __stdcall Render() override;

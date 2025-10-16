@@ -30,13 +30,13 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="ModelExporter.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ModelImportSample.cpp">
+      <Filter>Samples</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelExportSample.cpp">
       <Filter>Samples</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,13 +56,13 @@
     <ClInclude Include="ModelConverter.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="ModelExporter.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="ModelImportSample.h">
+      <Filter>Samples</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelExportSample.h">
       <Filter>Samples</Filter>
     </ClInclude>
   </ItemGroup>

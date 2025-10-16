@@ -160,7 +160,7 @@
     <ClCompile Include="AssimpTypes.cpp" />
     <ClCompile Include="ModelConverter.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ModelExporter.cpp" />
+    <ClCompile Include="ModelExportSample.cpp" />
     <ClCompile Include="ModelImportSample.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -175,7 +175,7 @@
     <ClInclude Include="..\Utils\FileUtils.h" />
     <ClInclude Include="AssimpTypes.h" />
     <ClInclude Include="ModelConverter.h" />
-    <ClInclude Include="ModelExporter.h" />
+    <ClInclude Include="ModelExportSample.h" />
     <ClInclude Include="ModelImportSample.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

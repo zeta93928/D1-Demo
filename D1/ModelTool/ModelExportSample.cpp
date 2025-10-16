@@ -12,8 +12,8 @@ bool __stdcall ModelExportSample::Init()
 
         // Memory -> Custom Data
         converter->ExportModelFile(L"Paladin/Paladin");
+        converter->ExportMaterialData(L"Paladin/Paladin");
     }
-
 
     return true;
 }
