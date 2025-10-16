@@ -66,7 +66,7 @@
     <ClInclude Include="D3D12ResourceManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshRenderData.h">
+    <ClInclude Include="PrimitiveRenderData.h">
       <Filter>RenderData</Filter>
     </ClInclude>
     <ClInclude Include="SkeletalMeshRenderData.h">
@@ -86,6 +86,12 @@
     </ClInclude>
     <ClInclude Include="ConstantBufferManager.h">
       <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshRenderData.h">
+      <Filter>RenderData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Common\Struct.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -113,7 +119,7 @@
     <ClCompile Include="SkeletalMeshRenderData.cpp">
       <Filter>RenderData</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshRenderData.cpp">
+    <ClCompile Include="PrimitiveRenderData.cpp">
       <Filter>RenderData</Filter>
     </ClCompile>
     <ClCompile Include="ConstantBufferPool.cpp">
@@ -127,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="ConstantBufferManager.cpp">
       <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshRenderData.cpp">
+      <Filter>RenderData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

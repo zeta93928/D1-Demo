@@ -5,7 +5,7 @@
 #include "../Engine/MaterialAsset.h"
 #include "../Engine/TextureAsset.h"
 #include "../Engine/Actor.h"
-#include "../Engine/StaticMeshComponent.h"
+#include "../Engine/PrimitiveComponent.h"
 
 Game::Game()
 {
@@ -21,11 +21,12 @@ bool Game::Init()
 	// Camera Actor
 	{
 		m_cameraActor = MakeShared<Actor>();
-		m_cameraActor->GetOrAddSceneComponent()->SetPosition(Vector3(0.f, 0.f, -10.f));
+		m_cameraActor->GetOrAddSceneComponent()->SetPosition(Vector3(0.f, 2.f, -10.f));
 		m_cameraActor->AddComponent(MakeShared<CameraComponent>());
 	}
 
 	// Mesh Actor
+	ActorRef meshActor = nullptr;
 	{
 		MeshAssetRef mesh1 = MakeShared<MeshAsset>();
 		mesh1->GenerateCube();
@@ -38,12 +39,20 @@ bool Game::Init()
 			material1->SetAlbedoMap(tex1);
 		}
 
-		m_meshActor = MakeShared<Actor>();
-		m_meshActor->GetOrAddSceneComponent();
-		m_meshActor->AddComponent(MakeShared<StaticMeshComponent>());
+		for (uint32 r = 0; r < 50; r++)
 		{
-			m_meshActor->GetStaticMeshComponent()->SetMeshAsset(mesh1);
-			m_meshActor->GetStaticMeshComponent()->SetMaterialAsset(material1);
+			for (uint32 c = 0; c < 50; c++)
+			{
+				meshActor = MakeShared<Actor>();
+				meshActor->GetOrAddSceneComponent()->SetPosition(Vector3(-50.f + (float)c * 2.f, 0.f, 0.f + (float)r * 5.f));
+				meshActor->AddComponent(MakeShared<PrimitiveComponent>());
+				{
+					meshActor->GetPrimitiveComponent()->SetMeshAsset(mesh1);
+					meshActor->GetPrimitiveComponent()->SetMaterialAsset(material1);
+				}
+
+				m_meshActors.push_back(meshActor);
+			}
 		}
 	}
 
@@ -53,7 +62,11 @@ bool Game::Init()
 void Game::Update()
 {
 	m_cameraActor->Update();
-	m_meshActor->Update();
+	
+	for (auto& actor : m_meshActors)
+	{
+		actor->Update();
+	}
 }
 
 void Game::Render()

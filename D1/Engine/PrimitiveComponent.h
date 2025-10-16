@@ -2,11 +2,11 @@
 
 #include "ComponentBase.h"
 
-class StaticMeshComponent : public ComponentBase
+class PrimitiveComponent : public ComponentBase
 {
 public:
-	StaticMeshComponent();
-	virtual ~StaticMeshComponent();
+	PrimitiveComponent();
+	virtual ~PrimitiveComponent();
 
 	virtual void Update() override;
 

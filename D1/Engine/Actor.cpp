@@ -2,7 +2,7 @@
 #include "Actor.h"
 #include "SceneComponent.h"
 #include "MonoBehaviour.h"
-#include "StaticMeshComponent.h"
+#include "PrimitiveComponent.h"
 
 Actor::Actor()
 {
@@ -118,11 +118,11 @@ SceneComponentRef Actor::GetOrAddSceneComponent()
 	return GetSceneComponent();
 }
 
-StaticMeshComponentRef Actor::GetStaticMeshComponent()
+PrimitiveComponentRef Actor::GetPrimitiveComponent()
 {
 	ComponentBaseRef component = GetFixedComponent(ComponentType::StaticMesh);
 
-	return std::static_pointer_cast<StaticMeshComponent>(component);
+	return std::static_pointer_cast<PrimitiveComponent>(component);
 }
 
 void Actor::AddComponent(ComponentBaseRef component)

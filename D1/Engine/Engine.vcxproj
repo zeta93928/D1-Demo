@@ -173,14 +173,16 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryHelper.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="MonoBehaviour.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderProxy.h" />
     <ClInclude Include="SceneComponent.h" />
-    <ClInclude Include="StaticMeshComponent.h" />
+    <ClInclude Include="PrimitiveComponent.h" />
     <ClInclude Include="TextureAsset.h" />
+    <ClInclude Include="TimeManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\SimpleMath.cpp" />
@@ -194,6 +196,7 @@
     <ClCompile Include="EngineBody.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MaterialAsset.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="MonoBehaviour.cpp" />
@@ -205,8 +208,9 @@
     </ClCompile>
     <ClCompile Include="RenderProxy.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
-    <ClCompile Include="StaticMeshComponent.cpp" />
+    <ClCompile Include="PrimitiveComponent.cpp" />
     <ClCompile Include="TextureAsset.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\SimpleMath.inl" />

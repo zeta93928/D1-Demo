@@ -20,25 +20,3 @@ using Matrix = DirectX::SimpleMath::Matrix;
 using Quaternion = DirectX::SimpleMath::Quaternion;
 
 using CREATE_INSTANCE_FUNC = bool(__stdcall*)(void*);
-
-// Struct
-struct TransformRenderData
-{
-	Matrix world;
-};
-
-struct GlobalRenderData
-{
-	Matrix view;
-	Matrix proj;
-	Matrix viewProj;
-	Matrix viewInv;
-};
-
-struct MaterialRenderData
-{
-	void* albedo;
-	void* normal;
-};
-
-

@@ -1,14 +1,19 @@
 #pragma once
 
-#include "../Common/Types.h"
+#include "../Common/Struct.h"
 
-struct IStaticMeshRenderData
+struct IPrimitiveRenderData
 {
 	virtual void __stdcall CreateMesh(/* Vertices */ void* vertices, uint32 typeSize, uint32 vertexNum, 
 									  /* Indices */ void* indices, uint32 indexNum) = 0;
 	virtual void __stdcall Release() = 0;
 	virtual void __stdcall SetTransformData(TransformRenderData* transformData) = 0;
 	virtual void __stdcall SetMaterialData(MaterialRenderData* materialData) = 0;
+};
+
+struct IStaticMeshRenderData
+{
+
 };
 
 struct ISkeletalMeshRenderData
@@ -27,10 +32,10 @@ struct IRenderer
 
 	virtual bool __stdcall	UpdateWindowSize(uint32 width, uint32 height) = 0;
 
-	virtual IStaticMeshRenderData*	 __stdcall	CreateStaticMeshRenderData() = 0;
+	virtual IPrimitiveRenderData*	 __stdcall	CreateStaticMeshRenderData() = 0;
 	virtual ISkeletalMeshRenderData* __stdcall	CreateSkeletalMeshRenderData() = 0;
 
-	virtual void __stdcall	RenderStaticMeshRenderData(IStaticMeshRenderData* renderData) = 0;
+	virtual void __stdcall	RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) = 0;
 	virtual void __stdcall	RenderSkeletalMeshRenderData() = 0;
 
 	virtual void __stdcall	SetGlobalRenderData(GlobalRenderData* globalData) = 0;

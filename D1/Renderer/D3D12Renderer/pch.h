@@ -17,7 +17,6 @@
 #include <queue>
 #include <map>
 #include <stack>
-#include <queue>
 
 // Inner
 #include "../../Interface/IRenderer.h"

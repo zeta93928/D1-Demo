@@ -8,14 +8,14 @@ void RenderProxy::EnqueueGlobalData(const GlobalRenderData& data)
 	GRenderer->SetGlobalRenderData(&rd);
 }
 
-void RenderProxy::EnqueueTransformData(IStaticMeshRenderData* mesh, const TransformRenderData& data)
+void RenderProxy::EnqueueTransformData(IPrimitiveRenderData* mesh, const TransformRenderData& data)
 {
 	TransformRenderData rd = {};
 	memcpy(&rd, &data, sizeof(TransformRenderData));
 	mesh->SetTransformData(&rd);
 }
 
-void RenderProxy::EnqueueMaterialData(IStaticMeshRenderData* mesh, const MaterialRenderData& data)
+void RenderProxy::EnqueueMaterialData(IPrimitiveRenderData* mesh, const MaterialRenderData& data)
 {
 	MaterialRenderData rd = {};
 	memcpy(&rd, &data, sizeof(MaterialRenderData));

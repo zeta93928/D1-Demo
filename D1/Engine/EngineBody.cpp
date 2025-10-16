@@ -33,6 +33,10 @@ extern "C" { __declspec(dllexport) extern const char* D3D12SDKPath = u8".\\D3D12
 
 IRenderer* GRenderer = nullptr;
 
+
+/*-----------------------------------------------------------------------------------
+								  Engine Entry Point
+-------------------------------------------------------------------------------------*/
 WPARAM EngineBody::Run(const GameDesc& desc)
 {
 	m_gameDesc = desc;
@@ -75,9 +79,10 @@ WPARAM EngineBody::Run(const GameDesc& desc)
 	assert(check);
 	assert(GRenderer);
 
+	// Manager 초기화
+	assert(InputManager::Get().Init(m_gameDesc.hwnd));
+	assert(TimeManager::Get().Init());
 	assert(GRenderer->Init(m_gameDesc.hwnd, true, true));
-
-	// Application 초기화
 	assert(m_gameDesc.app->Init());
 
 	MSG msg = {};
@@ -103,6 +108,9 @@ WPARAM EngineBody::Run(const GameDesc& desc)
 
 void EngineBody::Tick()
 {
+	TimeManager::Get().Update();
+	InputManager::Get().Update();
+
 	GRenderer->BeginRender();
 	{
 		m_gameDesc.app->Update();
@@ -113,6 +121,12 @@ void EngineBody::Tick()
 	}
 	GRenderer->EndRender();
 	GRenderer->Present();
+
+	// TEMP
+	{
+		WString fps = std::to_wstring(TimeManager::Get().GetFps()) + L" fps";
+		SetWindowText(m_gameDesc.hwnd, fps.c_str());
+	}
 }
 
 void EngineBody::CleanUp()

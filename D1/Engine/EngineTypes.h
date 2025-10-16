@@ -63,7 +63,7 @@ using WString = std::wstring;
 MAKE_SHARED_REF(Actor);
 MAKE_SHARED_REF(ComponentBase);
 MAKE_SHARED_REF(SceneComponent);
-MAKE_SHARED_REF(StaticMeshComponent);
+MAKE_SHARED_REF(PrimitiveComponent);
 MAKE_SHARED_REF(MonoBehaviour);
 MAKE_SHARED_REF(MeshAsset);
 MAKE_SHARED_REF(TextureAsset);

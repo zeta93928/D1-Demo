@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "D3D12Renderer.h"
-#include "StaticMeshRenderData.h"
+#include "PrimitiveRenderData.h"
 #include "DescriptorPool.h"
 #include "DescriptorAllocator.h"
 #include "ConstantBufferManager.h"
@@ -201,7 +201,7 @@ lb_exit:
 	{
 		// SkeletalMeshRenderData 생성 시 추가 작업 필요
 		// @TODO:
-		uint32 maxDescriptorNum = MAX_DRAW_COUNT_PER_FRAME * StaticMeshRenderData::DESCRIPTOR_COUNT_FOR_DRAW;
+		uint32 maxDescriptorNum = MAX_GLOBAL_CONSTANT_BUFFER_COUNT + MAX_DRAW_COUNT_PER_FRAME * PrimitiveRenderData::DESCRIPTOR_COUNT_FOR_DRAW;
 		
 		m_descriptorPool = new DescriptorPool;
 		m_descriptorPool->Create(maxDescriptorNum);
@@ -216,7 +216,7 @@ lb_exit:
 	// Constant Buffer Pool 생성
 	{
 		m_constantBufferManager = new ConstantBufferManager;
-		m_constantBufferManager->CreatePool(MAX_DRAW_COUNT_PER_FRAME);
+		m_constantBufferManager->CreatePool(MAX_DRAW_COUNT_PER_FRAME * PrimitiveRenderData::DESCRIPTOR_CB_COUNT);
 	}
 	
 	bResult = TRUE;
@@ -267,7 +267,9 @@ void __stdcall D3D12Renderer::BeginRender()
 	m_cmdList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	m_cmdList->RSSetViewports(1, &m_viewPort);
 	m_cmdList->RSSetScissorRects(1, &m_scissorRect);
-	m_cmdList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+	m_cmdList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+	UpdateGlobalData();
 }
 
 void __stdcall D3D12Renderer::EndRender()
@@ -370,9 +372,9 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 	return true;
 }
 
-IStaticMeshRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
+IPrimitiveRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
 {
-	StaticMeshRenderData* data = new StaticMeshRenderData;
+	PrimitiveRenderData* data = new PrimitiveRenderData;
 	assert(data);
 	assert(data->Init());
 
@@ -384,14 +386,14 @@ ISkeletalMeshRenderData* __stdcall D3D12Renderer::CreateSkeletalMeshRenderData()
     return nullptr;
 }
 
-void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IStaticMeshRenderData* renderData)
+void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IPrimitiveRenderData* renderData)
 {
 	if (nullptr == renderData)
 	{
 		return;
 	}
 
-	StaticMeshRenderData* inRenderData = (StaticMeshRenderData*)renderData;
+	PrimitiveRenderData* inRenderData = (PrimitiveRenderData*)renderData;
 
 	inRenderData->Draw(m_cmdList);
 }
@@ -493,6 +495,41 @@ void D3D12Renderer::CleanUp()
 
 		m_device = nullptr;
 	}
+}
+
+void D3D12Renderer::UpdateGlobalData()
+{
+	ID3D12DescriptorHeap* heap = DESC_POOL->GetDecriptorHeap();
+
+	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
+	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle = {};
+
+	if (!DESC_POOL->AllocDescriptorTable(cpuHandle, gpuHandle, MAX_GLOBAL_CONSTANT_BUFFER_COUNT))
+	{
+		__debugbreak();
+	}
+
+	ContantBufferEntry* cbEntry = nullptr;
+	{
+		ConstantBufferPool* global_CB_Pool = CONST_MANAGER->GetConstantBuffer(ConstantBufferType::Global);
+		{
+			cbEntry = global_CB_Pool->AllocEntry();
+			assert(cbEntry);
+			// Constant Buffer 의 내용을 Write 한다.
+			// Matrix 의 Shader 의 Matrix 규칙에 의해 col major -> row major 로 변경한다.
+			// Transpose() 사용
+			GlobalRenderData* globalCB = (GlobalRenderData*)cbEntry->sysMem;
+			globalCB->view = VIEW_MATRIX.Transpose();
+			globalCB->proj = PROJ_MATRIX.Transpose();
+
+			// Constant Buffer 의 Descriptor 를 Shader visible 용 Descriptor Heap 으로 Copy
+			// Root Signature 에서 설정한 Descriptor Table 과 순서가 동일해야 한다.
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, 0, SRV_DESC_SIZE);
+			DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+		}
+	}
+
+	m_globalCB_GPU = gpuHandle;
 }
 
 bool D3D12Renderer::CreateDepthStencil(uint32 width, uint32 height)

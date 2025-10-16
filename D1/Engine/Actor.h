@@ -17,7 +17,7 @@ public:
 	ComponentBaseRef GetFixedComponent(ComponentType type);
 	SceneComponentRef GetSceneComponent();
 	SceneComponentRef GetOrAddSceneComponent();
-	StaticMeshComponentRef GetStaticMeshComponent();
+	PrimitiveComponentRef GetPrimitiveComponent();
 	void AddComponent(ComponentBaseRef component);
 
 private:

@@ -1,29 +1,29 @@
 #include "pch.h"
-#include "StaticMeshComponent.h"
+#include "PrimitiveComponent.h"
 #include "MeshAsset.h"
 #include "MaterialAsset.h"
 #include "TextureAsset.h"
 
-StaticMeshComponent::StaticMeshComponent()
+PrimitiveComponent::PrimitiveComponent()
 	: Super(ComponentType::StaticMesh)
 {
 }
 
-StaticMeshComponent::~StaticMeshComponent()
+PrimitiveComponent::~PrimitiveComponent()
 {
 }
 
-void StaticMeshComponent::Update()
+void PrimitiveComponent::Update()
 {
 	static float dt = 0.f;
-	dt += 0.0001f;
+	dt += 0.00001f;
 
-	IStaticMeshRenderData* staticMeshRenderData =  m_mesh->GetStaicMeshRenderData();
+	IPrimitiveRenderData* primitiveRenderData =  m_mesh->GetPrimitiveRenderData();
 
 	// Renderer 측으로 Transform 정보 업데이트
 	TransformRenderData transformData = {};
-	transformData.world = GetSceneComponent()->GetWorldMatrix() * Matrix::CreateRotationY(dt);
-	RenderProxy::Get().EnqueueTransformData(staticMeshRenderData, transformData);
+	transformData.world = Matrix::CreateRotationY(dt) * GetSceneComponent()->GetWorldMatrix();
+	RenderProxy::Get().EnqueueTransformData(primitiveRenderData, transformData);
 
 	// Renderer 측으로 Material 정보 업데이트
 	void* albedo = m_material->GetAlbedoMap()->GetTextureHandle();
@@ -31,8 +31,8 @@ void StaticMeshComponent::Update()
 	MaterialRenderData materialData = {};
 	materialData.albedo = albedo;
 	// materialData.normal = normal;
-	RenderProxy::Get().EnqueueMaterialData(staticMeshRenderData, materialData);
+	RenderProxy::Get().EnqueueMaterialData(primitiveRenderData, materialData);
 
 	// Renderer에 Draw call 전달
-	GRenderer->RenderStaticMeshRenderData(staticMeshRenderData);
+	GRenderer->RenderStaticMeshRenderData(primitiveRenderData);
 }

@@ -21,7 +21,7 @@ bool ConstantBufferManager::CreatePool(uint32 drawNum)
 		if (i == (uint32)ConstantBufferType::Global)
 		{
 			m_constantBufferPools[i] = new ConstantBufferPool;
-			m_constantBufferPools[i]->Create((uint32)D3DUtils::AlignConstantBufferSize(TypeSizeTable[i].size), 1);
+			m_constantBufferPools[i]->Create((uint32)D3DUtils::AlignConstantBufferSize(TypeSizeTable[i].size), D3D12Renderer::MAX_GLOBAL_CONSTANT_BUFFER_COUNT);
 
 			continue;
 		}

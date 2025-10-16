@@ -17,7 +17,7 @@ public:
 
 private:
 	ActorRef m_cameraActor = nullptr;
-	ActorRef m_meshActor = nullptr;
+	Vector<ActorRef> m_meshActors = {};
 };
 
 

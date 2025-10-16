@@ -15,3 +15,5 @@
 #include "SceneComponent.h"
 #include "CameraComponent.h"
 #include "RenderProxy.h"
+#include "InputManager.h"
+#include "TimeManager.h"

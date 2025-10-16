@@ -41,3 +41,5 @@ struct VertexTextureNormalTangentBlendData
 	Vector4 blendIndices = {};
 	Vector4 blendWeights = {};
 };
+
+using ModelVertexType = VertexTextureNormalTangentBlendData;

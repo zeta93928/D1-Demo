@@ -163,6 +163,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\SimpleMath.h" />
+    <ClInclude Include="..\..\Common\Struct.h" />
     <ClInclude Include="..\..\Common\Types.h" />
     <ClInclude Include="..\..\Common\VertexData.h" />
     <ClInclude Include="..\..\Interface\IRenderer.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RendererMacro.h" />
     <ClInclude Include="SkeletalMeshRenderData.h" />
+    <ClInclude Include="PrimitiveRenderData.h" />
     <ClInclude Include="StaticMeshRenderData.h" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +199,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SkeletalMeshRenderData.cpp" />
+    <ClCompile Include="PrimitiveRenderData.cpp" />
     <ClCompile Include="StaticMeshRenderData.cpp" />
   </ItemGroup>
   <ItemGroup>

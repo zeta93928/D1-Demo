@@ -25,10 +25,10 @@ public:
 
 	virtual bool __stdcall UpdateWindowSize(uint32 width, uint32 height) override;
 
-	IStaticMeshRenderData* __stdcall CreateStaticMeshRenderData() override;
+	IPrimitiveRenderData* __stdcall CreateStaticMeshRenderData() override;
 	ISkeletalMeshRenderData* __stdcall CreateSkeletalMeshRenderData() override;
 
-	virtual void __stdcall RenderStaticMeshRenderData(IStaticMeshRenderData* renderData) override;
+	virtual void __stdcall RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) override;
 	virtual void __stdcall RenderSkeletalMeshRenderData() override;
 
 	virtual void __stdcall SetGlobalRenderData(GlobalRenderData* globalData) override;
@@ -53,6 +53,8 @@ public:
 private:
 	void CleanUp();
 
+	void UpdateGlobalData();
+
 	bool CreateDepthStencil(uint32 width, uint32 height);
 	void CleanUpDepthStencil();
 
@@ -69,10 +71,13 @@ private:
 private:
 	// 한 프레임에 그려지는 오브젝트 수
 	// 이 값에 각 오브젝트 랜더 데이터의 Descipror 갯수를 곱한다
-	static const uint32 MAX_DRAW_COUNT_PER_FRAME = 256;
+	static const uint32 MAX_DRAW_COUNT_PER_FRAME = 2500;
 
 	// Texture 리소스를 Heap 에 바인딩 하기 위한 DescriptorAllcator 할당 크기
 	static const uint32 MAX_DESCRIPTOR_COUNT = 4096;
+
+	// Global Constant Buffer Count
+	static const uint32 MAX_GLOBAL_CONSTANT_BUFFER_COUNT = 1;
 
 	HWND m_hwnd = nullptr;
 	ID3D12Device5* m_device = nullptr;
@@ -113,6 +118,12 @@ private:
 	//~End Renderer 자원(CB, SRV 등...) Manager
 
 	GlobalRenderData m_globalRenderData = {};
+	D3D12_GPU_DESCRIPTOR_HANDLE m_globalCB_GPU = {};
+
+	friend class PrimitiveRenderData;
+	friend class StaticMeshRenderData;
+	friend class SkeletalMeshRenderData;
+	friend class ConstantBufferManager;
 };
 
 extern D3D12Renderer* GRenderer;
