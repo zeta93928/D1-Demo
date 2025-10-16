@@ -93,6 +93,9 @@
     <ClInclude Include="..\..\Common\Struct.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="RendererEnum.h">
+      <Filter>Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

@@ -242,7 +242,7 @@ void PrimitiveRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
 	ContantBufferEntry* cbEntry = nullptr;
 	{
 		// Transform Constant Buffer Data
-		ConstantBufferPool* transform_CB_Pool = CONST_MANAGER->GetConstantBuffer(ConstantBufferType::Transform);
+		ConstantBufferPool* transform_CB_Pool = CONSTANT_POOL(ConstantBufferType::Transform);
 		{
 			cbEntry = transform_CB_Pool->AllocEntry();
 			assert(cbEntry);

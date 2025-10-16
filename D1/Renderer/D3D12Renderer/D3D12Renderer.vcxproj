@@ -177,6 +177,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RendererMacro.h" />
+    <ClInclude Include="RendererEnum.h" />
     <ClInclude Include="SkeletalMeshRenderData.h" />
     <ClInclude Include="PrimitiveRenderData.h" />
     <ClInclude Include="StaticMeshRenderData.h" />

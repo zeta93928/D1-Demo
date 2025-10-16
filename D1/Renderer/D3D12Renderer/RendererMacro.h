@@ -2,7 +2,7 @@
 
 #define DEVICE				GRenderer->GetDevice()
 #define RESOURCE_MANAGER	GRenderer->GetResourceManager()
-#define CONST_MANAGER		GRenderer->GetConstantBufferManager()
+#define CONSTANT_POOL(type) GRenderer->GetConstantBufferPool(type)
 #define DESC_POOL			GRenderer->GetDescriptorPool()
 #define DESC_ALLOCATOR		GRenderer->GetDescriptorAllocator()		
 

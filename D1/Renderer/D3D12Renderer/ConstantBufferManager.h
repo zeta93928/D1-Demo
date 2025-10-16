@@ -1,12 +1,5 @@
 #pragma once
 
-enum class ConstantBufferType : uint8
-{
-	Global,
-	Transform,
-	End,
-};
-
 enum
 {
 	MAX_CONSTANT_BUFFER_COUNT = (uint8)ConstantBufferType::End

@@ -25,6 +25,8 @@ bool Game::Init()
 		m_cameraActor->AddComponent(MakeShared<CameraComponent>());
 	}
 
+	int32 test_num = 50;
+
 	// Mesh Actor
 	ActorRef meshActor = nullptr;
 	{
@@ -39,12 +41,12 @@ bool Game::Init()
 			material1->SetAlbedoMap(tex1);
 		}
 
-		for (uint32 r = 0; r < 50; r++)
+		for (uint32 r = 0; r < test_num; r++)
 		{
-			for (uint32 c = 0; c < 50; c++)
+			for (uint32 c = 0; c < test_num; c++)
 			{
 				meshActor = MakeShared<Actor>();
-				meshActor->GetOrAddSceneComponent()->SetPosition(Vector3(-50.f + (float)c * 2.f, 0.f, 0.f + (float)r * 5.f));
+				meshActor->GetOrAddSceneComponent()->SetPosition(Vector3(-test_num + (float)c * 2.f, 0.f, 0.f + (float)r * 5.f));
 				meshActor->AddComponent(MakeShared<PrimitiveComponent>());
 				{
 					meshActor->GetPrimitiveComponent()->SetMeshAsset(mesh1);

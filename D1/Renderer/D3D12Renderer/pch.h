@@ -21,6 +21,7 @@
 // Inner
 #include "../../Interface/IRenderer.h"
 #include "../../Common/Types.h"
+#include "RendererEnum.h"
 #include "../../Common/VertexData.h"
 #include "../Utils/D3DUtil.h"
 #include "RendererMacro.h"
@@ -30,3 +31,4 @@
 #include "DescriptorPool.h"
 #include "DescriptorAllocator.h"
 #include "ConstantBufferPool.h"
+

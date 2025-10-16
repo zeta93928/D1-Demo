@@ -90,7 +90,7 @@ lb_exit:
 		goto lb_return;
 	}
 
-	m_AdapterDesc = AdapterDesc;
+	m_adapterDesc = AdapterDesc;
 	m_hwnd = hwnd;
 
 	if (pDebugController)
@@ -104,7 +104,7 @@ lb_exit:
 		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
-		hr = m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_pCommandQueue));
+		hr = m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_cmdQueue));
 		if (FAILED(hr))
 		{
 			__debugbreak();
@@ -137,14 +137,14 @@ lb_exit:
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 		swapChainDesc.Flags |= DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
-		m_dwSwapChainFlags = swapChainDesc.Flags;
+		m_swapChainFlags = swapChainDesc.Flags;
 
 
 		DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = {};
 		fsSwapChainDesc.Windowed = TRUE;
 
 		IDXGISwapChain1* pSwapChain1 = nullptr;
-		if (FAILED(pFactory->CreateSwapChainForHwnd(m_pCommandQueue, hwnd, &swapChainDesc, &fsSwapChainDesc, nullptr, &pSwapChain1)))
+		if (FAILED(pFactory->CreateSwapChainForHwnd(m_cmdQueue, hwnd, &swapChainDesc, &fsSwapChainDesc, nullptr, &pSwapChain1)))
 		{
 			__debugbreak();
 		}
@@ -196,27 +196,29 @@ lb_exit:
 		m_resourceManager = new D3D12ResourceManager;
 		m_resourceManager->Init();
 	}
-	
-	// Descriptor Pool 생성
+
+	// Frame 단위로 관리 할 Manager 생성
+	for (uint32 i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
 	{
-		// SkeletalMeshRenderData 생성 시 추가 작업 필요
-		// @TODO:
-		uint32 maxDescriptorNum = MAX_GLOBAL_CONSTANT_BUFFER_COUNT + MAX_DRAW_COUNT_PER_FRAME * PrimitiveRenderData::DESCRIPTOR_COUNT_FOR_DRAW;
-		
-		m_descriptorPool = new DescriptorPool;
-		m_descriptorPool->Create(maxDescriptorNum);
-	} 
+		// Descriptor Pool 생성
+		{
+			uint32 maxDescriptorNum = MAX_GLOBAL_CONSTANT_BUFFER_COUNT + MAX_DRAW_COUNT_PER_FRAME * PrimitiveRenderData::DESCRIPTOR_COUNT_FOR_DRAW;
+
+			m_descriptorPool[i] = new DescriptorPool;
+			m_descriptorPool[i]->Create(maxDescriptorNum);
+		}
+
+		// Constant Buffer Pool 생성
+		{
+			m_constantBufferManager[i] = new ConstantBufferManager;
+			m_constantBufferManager[i]->CreatePool(MAX_DRAW_COUNT_PER_FRAME* PrimitiveRenderData::DESCRIPTOR_CB_COUNT);
+		}
+	}
 
 	// Descriptor Allocator 생성
 	{
 		m_descriptorAllocator = new DescriptorAllocator;
 		m_descriptorAllocator->Create(MAX_DESCRIPTOR_COUNT);
-	}
-
-	// Constant Buffer Pool 생성
-	{
-		m_constantBufferManager = new ConstantBufferManager;
-		m_constantBufferManager->CreatePool(MAX_DRAW_COUNT_PER_FRAME * PrimitiveRenderData::DESCRIPTOR_CB_COUNT);
 	}
 	
 	bResult = TRUE;
@@ -247,43 +249,50 @@ void __stdcall D3D12Renderer::Release()
 
 void __stdcall D3D12Renderer::BeginRender()
 {
-	if (FAILED(m_cmdAllocator->Reset()))
+	ID3D12CommandAllocator* cmdAllocator = m_cmdAllocator[m_curContex];
+	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
+
+	if (FAILED(cmdAllocator->Reset()))
 	{
 		__debugbreak();
 	}
 
-	if (FAILED(m_cmdList->Reset(m_cmdAllocator, nullptr)))
+	if (FAILED(cmdList->Reset(cmdAllocator, nullptr)))
 	{
 		__debugbreak();
 	}
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_renderTargetIndex, m_rtvDescriptorSize);
-	m_cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_renderTargetIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_renderTargetIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
 	
 	const float clearColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
-	m_cmdList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
-	m_cmdList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	m_cmdList->RSSetViewports(1, &m_viewPort);
-	m_cmdList->RSSetScissorRects(1, &m_scissorRect);
-	m_cmdList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+	cmdList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	cmdList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	cmdList->RSSetViewports(1, &m_viewPort);
+	cmdList->RSSetScissorRects(1, &m_scissorRect);
+	cmdList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	UpdateGlobalData();
 }
 
 void __stdcall D3D12Renderer::EndRender()
 {
-	m_cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_renderTargetIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
-	m_cmdList->Close();
+	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
+
+	cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_renderTargetIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+	cmdList->Close();
 
 	// cmdList 로 기록한 command 를 GPU에 제출
-	ID3D12CommandList* ppCommandLists[] = { m_cmdList };
-	m_pCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+	ID3D12CommandList* ppCommandLists[] = { cmdList };
+	m_cmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 }
 
 void __stdcall D3D12Renderer::Present()
 {
+	Fence();
+
 	//	uint32 syncInterval = 1;	// VSync On
 	uint32 syncInterval = 0;	// VSync Off
 
@@ -305,14 +314,17 @@ void __stdcall D3D12Renderer::Present()
 	// 다음 버퍼의 인덱스로 교체
 	m_renderTargetIndex = m_swapChain->GetCurrentBackBufferIndex();
 
-	Fence();
+	// Context 를 교체
+	uint32 nextContext = (m_curContex + 1) % MAX_PENDING_FRAME_COUNT;
 
-	WaitForFenceValue();
+	WaitForFenceValue(m_lastFenceValue[nextContext]);
 
 	// Constant Buffer 관련 Descriptor Heap 초기화
 	// 매 프래임 변경되기 때문
-	m_constantBufferManager->ResetPool();
-	m_descriptorPool->Reset();
+	m_constantBufferManager[nextContext]->ResetPool();
+	m_descriptorPool[nextContext]->Reset();
+	
+	m_curContex = nextContext;
 }
 
 bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
@@ -325,6 +337,14 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 	if (m_backBufferWidth == width && m_backBufferHeight == height)
 	{
 		return false;
+	}
+
+	// wait for all commands
+	Fence();
+
+	for (DWORD i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
+	{
+		WaitForFenceValue(m_lastFenceValue[i]);
 	}
 
 	DXGI_SWAP_CHAIN_DESC1	desc;
@@ -340,7 +360,7 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 
 	CleanUpDepthStencil();
 
-	if (FAILED(m_swapChain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, m_dwSwapChainFlags)))
+	if (FAILED(m_swapChain->ResizeBuffers(SWAP_CHAIN_FRAME_COUNT, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, m_swapChainFlags)))
 	{
 		__debugbreak();
 	}
@@ -388,6 +408,8 @@ ISkeletalMeshRenderData* __stdcall D3D12Renderer::CreateSkeletalMeshRenderData()
 
 void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IPrimitiveRenderData* renderData)
 {
+	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
+
 	if (nullptr == renderData)
 	{
 		return;
@@ -395,7 +417,7 @@ void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IPrimitiveRenderData* r
 
 	PrimitiveRenderData* inRenderData = (PrimitiveRenderData*)renderData;
 
-	inRenderData->Draw(m_cmdList);
+	inRenderData->Draw(cmdList);
 }
 
 void __stdcall D3D12Renderer::RenderSkeletalMeshRenderData()
@@ -420,14 +442,20 @@ void __stdcall D3D12Renderer::ReleaseTextureHandle(const WCHAR* name)
 	RESOURCE_MANAGER->ReleaseTextureData(name);
 }
 
+ConstantBufferPool* D3D12Renderer::GetConstantBufferPool(ConstantBufferType type)
+{
+	ConstantBufferManager* cbManager = m_constantBufferManager[m_curContex];
+
+	return cbManager->GetConstantBuffer(type);
+}
+
 void D3D12Renderer::CleanUp()
 {
-	WaitForFenceValue();
+	Fence();
 
-	if (m_constantBufferManager)
+	for (uint32 i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
 	{
-		delete m_constantBufferManager;
-		m_constantBufferManager = nullptr;
+		WaitForFenceValue(m_lastFenceValue[i]);
 	}
 
 	if (m_descriptorAllocator)
@@ -436,10 +464,19 @@ void D3D12Renderer::CleanUp()
 		m_descriptorAllocator = nullptr;
 	}
 
-	if (m_descriptorPool)
+	for (uint32 i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
 	{
-		delete m_descriptorPool;
-		m_descriptorPool = nullptr;
+		if (m_constantBufferManager)
+		{
+			delete m_constantBufferManager[i];
+			m_constantBufferManager[i] = nullptr;
+		}
+
+		if (m_descriptorPool)
+		{
+			delete m_descriptorPool[i];
+			m_descriptorPool[i] = nullptr;
+		}
 	}
 
 	if (m_resourceManager)
@@ -467,10 +504,10 @@ void D3D12Renderer::CleanUp()
 		m_swapChain = nullptr;
 	}
 
-	if (m_pCommandQueue)
+	if (m_cmdQueue)
 	{
-		m_pCommandQueue->Release();
-		m_pCommandQueue = nullptr;
+		m_cmdQueue->Release();
+		m_cmdQueue = nullptr;
 	}
 
 	CleanUpCommandList();
@@ -511,7 +548,7 @@ void D3D12Renderer::UpdateGlobalData()
 
 	ContantBufferEntry* cbEntry = nullptr;
 	{
-		ConstantBufferPool* global_CB_Pool = CONST_MANAGER->GetConstantBuffer(ConstantBufferType::Global);
+		ConstantBufferPool* global_CB_Pool = CONSTANT_POOL(ConstantBufferType::Global);
 		{
 			cbEntry = global_CB_Pool->AllocEntry();
 			assert(cbEntry);
@@ -593,60 +630,72 @@ void D3D12Renderer::CleanUpDepthStencil()
 void D3D12Renderer::CreateFence()
 {
 	// Create synchronization objects and wait until assets have been uploaded to the GPU.
-	if (FAILED(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFence))))
+	if (FAILED(m_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence))))
 	{
 		__debugbreak();
 	}
 
-	m_ui64FenceValue = 0;
+	m_fenceValue = 0;
 
 	// Create an event handle to use for frame synchronization.
-	m_hFenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
 void D3D12Renderer::CleanUpFence()
 {
-	if (m_hFenceEvent)
+	if (m_fenceEvent)
 	{
-		CloseHandle(m_hFenceEvent);
-		m_hFenceEvent = nullptr;
+		CloseHandle(m_fenceEvent);
+		m_fenceEvent = nullptr;
 	}
-	if (m_pFence)
+	if (m_fence)
 	{
-		m_pFence->Release();
-		m_pFence = nullptr;
+		m_fence->Release();
+		m_fence = nullptr;
 	}
 }
 
 void D3D12Renderer::CreateCommandList()
 {
-	if (FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_cmdAllocator))))
+	for (uint32 i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
 	{
-		__debugbreak();
-	}
+		ID3D12CommandAllocator* cmdAllocator = nullptr;
+		ID3D12GraphicsCommandList* cmdList = nullptr;
 
-	// Create the command list.
-	if (FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_cmdAllocator, nullptr, IID_PPV_ARGS(&m_cmdList))))
-	{
-		__debugbreak();
-	}
+		if (FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&cmdAllocator))))
+		{
+			__debugbreak();
+		}
 
-	// Command lists are created in the recording state, but there is nothing
-	// to record yet. The main loop expects it to be closed, so close it now.
-	m_cmdList->Close();
+		// Create the command list.
+		if (FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, cmdAllocator, nullptr, IID_PPV_ARGS(&cmdList))))
+		{
+			__debugbreak();
+		}
+
+		// Command lists are created in the recording state, but there is nothing
+		// to record yet. The main loop expects it to be closed, so close it now.
+		cmdList->Close();
+
+		m_cmdAllocator[i] = cmdAllocator;
+		m_cmdList[i] = cmdList;
+	}
 }
 
 void D3D12Renderer::CleanUpCommandList()
 {
-	if (m_cmdList)
+	for (uint32 i = 0; i < MAX_PENDING_FRAME_COUNT; i++)
 	{
-		m_cmdList->Release();
-		m_cmdList = nullptr;
-	}
-	if (m_cmdAllocator)
-	{
-		m_cmdAllocator->Release();
-		m_cmdAllocator = nullptr;
+		if (m_cmdList[i])
+		{
+			m_cmdList[i]->Release();
+			m_cmdList[i] = nullptr;
+		}
+		if (m_cmdAllocator[i])
+		{
+			m_cmdAllocator[i]->Release();
+			m_cmdAllocator[i] = nullptr;
+		}
 	}
 }
 
@@ -698,21 +747,20 @@ void D3D12Renderer::CleanUpDescriptorHeap()
 	}
 }
 
-UINT64 D3D12Renderer::Fence()
+uint64 D3D12Renderer::Fence()
 {
-	m_ui64FenceValue++;
-	m_pCommandQueue->Signal(m_pFence, m_ui64FenceValue);
-	return m_ui64FenceValue;
+	m_fenceValue++;
+	m_cmdQueue->Signal(m_fence, m_fenceValue);
+	m_lastFenceValue[m_curContex] = m_fenceValue;
+	return m_fenceValue;
 }
 
-void D3D12Renderer::WaitForFenceValue()
+void D3D12Renderer::WaitForFenceValue(uint64 expectedFenceValue)
 {
-	const UINT64 ExpectedFenceValue = m_ui64FenceValue;
-
 	// Wait until the previous frame is finished.
-	if (m_pFence->GetCompletedValue() < ExpectedFenceValue)
+	if (m_fence->GetCompletedValue() < expectedFenceValue)
 	{
-		m_pFence->SetEventOnCompletion(ExpectedFenceValue, m_hFenceEvent);
-		WaitForSingleObject(m_hFenceEvent, INFINITE);
+		m_fence->SetEventOnCompletion(expectedFenceValue, m_fenceEvent);
+		WaitForSingleObject(m_fenceEvent, INFINITE);
 	}
 }

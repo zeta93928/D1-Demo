@@ -2,13 +2,15 @@
 
 enum : uint8
 {
-	SWAP_CHAIN_FRAME_COUNT = 2
+	SWAP_CHAIN_FRAME_COUNT = 3,
+	MAX_PENDING_FRAME_COUNT = SWAP_CHAIN_FRAME_COUNT - 1,
 };
 
 class D3D12ResourceManager;
 class DescriptorPool;
 class DescriptorAllocator;
 class ConstantBufferManager;
+class ConstantBufferPool;
 
 class D3D12Renderer : public IRenderer
 {
@@ -39,16 +41,14 @@ public:
 public:
 	ID3D12Device5* GetDevice() { return m_device; }
 	D3D12ResourceManager* GetResourceManager() { return m_resourceManager; }
-	DescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
+	DescriptorPool* GetDescriptorPool() { return m_descriptorPool[m_curContex]; }
 	DescriptorAllocator* GetDescriptorAllocator() { return m_descriptorAllocator; }
 	const GlobalRenderData& GetGlobalRenderData() { return m_globalRenderData; }
+	ConstantBufferPool* GetConstantBufferPool(ConstantBufferType type);
 
 	uint32 GetSRVDescriptorSize() { return m_srvDescriptorSize; }
 	uint32 GetRTVDescriptorSize() { return m_rtvDescriptorSize; }
 	uint32 GetDSVDescriptorSize() { return m_dsvDescriptorSize; }
-
-	// 매니저로 관리 필요
-	ConstantBufferManager* GetConstantBufferManager() { return m_constantBufferManager; }
 
 private:
 	void CleanUp();
@@ -65,8 +65,9 @@ private:
 	bool CreateDescriptorHeap();
 	void CleanUpDescriptorHeap();
 
-	UINT64 Fence();
-	void WaitForFenceValue();
+	uint64 Fence();
+
+	void WaitForFenceValue(uint64 expectedFenceValue);
 
 private:
 	// 한 프레임에 그려지는 오브젝트 수
@@ -81,16 +82,18 @@ private:
 
 	HWND m_hwnd = nullptr;
 	ID3D12Device5* m_device = nullptr;
-	ID3D12CommandQueue* m_pCommandQueue = nullptr;
-	ID3D12CommandAllocator* m_cmdAllocator = nullptr;
-	ID3D12GraphicsCommandList* m_cmdList = nullptr;
-	UINT64	m_ui64FenceValue = 0;
+	ID3D12CommandQueue* m_cmdQueue = nullptr;
+	ID3D12CommandAllocator* m_cmdAllocator[MAX_PENDING_FRAME_COUNT] = {};
+	ID3D12GraphicsCommandList* m_cmdList[MAX_PENDING_FRAME_COUNT] = {};
+	
+	uint64 m_lastFenceValue[MAX_PENDING_FRAME_COUNT] = {};
+	uint64 m_fenceValue = 0;
 
-	D3D_FEATURE_LEVEL	m_FeatureLevel = D3D_FEATURE_LEVEL_11_0;
-	DXGI_ADAPTER_DESC1	m_AdapterDesc = {};
+	D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0;
+	DXGI_ADAPTER_DESC1 m_adapterDesc = {};
 	IDXGISwapChain3* m_swapChain = nullptr;
-	D3D12_VIEWPORT	m_viewPort = {};
-	D3D12_RECT		m_scissorRect = {};
+	D3D12_VIEWPORT m_viewPort = {};
+	D3D12_RECT m_scissorRect = {};
 	uint32 m_backBufferWidth = 0;
 	uint32 m_backBufferHeight = 0;
 
@@ -105,20 +108,22 @@ private:
 	uint32 m_dsvDescriptorSize = 0;
 	uint32 m_srvDescriptorSize = 0;
 
-	UINT	m_dwSwapChainFlags = 0;
-	UINT	m_renderTargetIndex = 0;
-	HANDLE	m_hFenceEvent = nullptr;
-	ID3D12Fence* m_pFence = nullptr;
+	uint32 m_swapChainFlags = 0;
+	uint32 m_renderTargetIndex = 0;
+	HANDLE m_fenceEvent = nullptr;
+	ID3D12Fence* m_fence = nullptr;
 
 	//~Start Renderer 자원(CB, SRV 등...) Manager
 	D3D12ResourceManager* m_resourceManager = nullptr;
-	DescriptorPool* m_descriptorPool = nullptr;
+	DescriptorPool* m_descriptorPool[MAX_PENDING_FRAME_COUNT] = {};
 	DescriptorAllocator* m_descriptorAllocator = nullptr;
-	ConstantBufferManager* m_constantBufferManager = nullptr;
+	ConstantBufferManager* m_constantBufferManager[MAX_PENDING_FRAME_COUNT] = {};
 	//~End Renderer 자원(CB, SRV 등...) Manager
 
 	GlobalRenderData m_globalRenderData = {};
 	D3D12_GPU_DESCRIPTOR_HANDLE m_globalCB_GPU = {};
+
+	uint32 m_curContex = 0;
 
 	friend class PrimitiveRenderData;
 	friend class StaticMeshRenderData;
