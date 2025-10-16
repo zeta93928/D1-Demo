@@ -34,9 +34,9 @@ bool StaticMeshRenderData::Init()
 		ID3DBlob* signature = nullptr;
 		ID3DBlob* error = nullptr;
 
-		CD3DX12_DESCRIPTOR_RANGE ranges[1] = {};
+		CD3DX12_DESCRIPTOR_RANGE ranges[2] = {};
 		ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 2, 0);	// b0: global, b1: transform
-		// ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);	// t0: texture
+		ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);	// t0: texture
 
 		CD3DX12_ROOT_PARAMETER rootParameters[1] = {};
 		rootParameters[0].InitAsDescriptorTable(_countof(ranges), ranges, D3D12_SHADER_VISIBILITY_ALL);
@@ -178,6 +178,12 @@ void __stdcall StaticMeshRenderData::SetTransformData(TransformRenderData* trans
 	memcpy(&m_transformData, transformData, sizeof(TransformRenderData));
 }
 
+void __stdcall StaticMeshRenderData::SetMaterialData(MaterialRenderData* materialData)
+{
+	assert(materialData);
+	memcpy(&m_materialData, materialData, sizeof(MaterialRenderData));
+}
+
 void StaticMeshRenderData::CleanUp()
 {
 	if (m_vertexBuffer)
@@ -259,6 +265,13 @@ void StaticMeshRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
 			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, CB1, SRV_DESC_SIZE);
 			DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 		}
+	}
+
+	// SRV
+	{
+		TextureDesc* albedo = (TextureDesc*)m_materialData.albedo;
+		CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, SRV0, SRV_DESC_SIZE);
+		DEVICE->CopyDescriptorsSimple(1, cbvDest, albedo->srvHanlde, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
 	// RootSignature ¼³Á¤

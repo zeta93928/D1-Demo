@@ -66,3 +66,5 @@ MAKE_SHARED_REF(SceneComponent);
 MAKE_SHARED_REF(StaticMeshComponent);
 MAKE_SHARED_REF(MonoBehaviour);
 MAKE_SHARED_REF(MeshAsset);
+MAKE_SHARED_REF(TextureAsset);
+MAKE_SHARED_REF(MaterialAsset);

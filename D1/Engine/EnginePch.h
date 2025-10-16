@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <windows.h>
+#include <directxtex/directxtex.h>
 
 // Inner
 #include "../Common/Types.h"

@@ -76,6 +76,9 @@
     <ClInclude Include="RenderProxy.h">
       <Filter>RenderProxy</Filter>
     </ClInclude>
+    <ClInclude Include="MaterialAsset.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pch">
@@ -163,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="RenderProxy.cpp">
       <Filter>RenderProxy</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialAsset.cpp">
+      <Filter>Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

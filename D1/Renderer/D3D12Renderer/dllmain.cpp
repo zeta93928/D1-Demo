@@ -2,10 +2,20 @@
 #include "pch.h"
 #include "D3D12Renderer.h"
 
+/*-----------------------------------------------------------------------------------
+                                       Libs
+-------------------------------------------------------------------------------------*/
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "d3dcompiler.lib")
+
+#ifdef _DEBUG
+#pragma comment(lib, "E:/D1-Demo/D1/ThirdParty/Libs/DirectXTex/DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "../ThirdParty/Libs/DriectXTex/DirectXTex.lib")
+#endif
+
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,

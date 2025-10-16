@@ -207,6 +207,12 @@ lb_exit:
 		m_descriptorPool->Create(maxDescriptorNum);
 	} 
 
+	// Descriptor Allocator 持失
+	{
+		m_descriptorAllocator = new DescriptorAllocator;
+		m_descriptorAllocator->Create(MAX_DESCRIPTOR_COUNT);
+	}
+
 	// Constant Buffer Pool 持失
 	{
 		m_constantBufferManager = new ConstantBufferManager;
@@ -400,6 +406,18 @@ void __stdcall D3D12Renderer::SetGlobalRenderData(GlobalRenderData* renderData)
 	memcpy(&m_globalRenderData, renderData, sizeof(GlobalRenderData));
 }
 
+void* __stdcall D3D12Renderer::AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img)
+{
+	void* handle = RESOURCE_MANAGER->BindTextureData(name, img);
+	assert(handle);
+	return handle;
+}
+
+void __stdcall D3D12Renderer::ReleaseTextureHandle(const WCHAR* name)
+{
+	RESOURCE_MANAGER->ReleaseTextureData(name);
+}
+
 void D3D12Renderer::CleanUp()
 {
 	WaitForFenceValue();
@@ -408,6 +426,12 @@ void D3D12Renderer::CleanUp()
 	{
 		delete m_constantBufferManager;
 		m_constantBufferManager = nullptr;
+	}
+
+	if (m_descriptorAllocator)
+	{
+		delete m_descriptorAllocator;
+		m_descriptorAllocator = nullptr;
 	}
 
 	if (m_descriptorPool)

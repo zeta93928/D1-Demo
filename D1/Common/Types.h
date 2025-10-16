@@ -35,3 +35,10 @@ struct GlobalRenderData
 	Matrix viewInv;
 };
 
+struct MaterialRenderData
+{
+	void* albedo;
+	void* normal;
+};
+
+

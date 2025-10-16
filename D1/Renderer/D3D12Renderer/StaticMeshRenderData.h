@@ -17,6 +17,7 @@ public:
 	virtual void __stdcall CreateMesh(void* vertices, uint32 typeSize, uint32 vertexNum, void* indices, uint32 indexNum) override;
 	virtual void __stdcall Release() override;
 	virtual void __stdcall SetTransformData(TransformRenderData* transformData) override;
+	virtual void __stdcall SetMaterialData(MaterialRenderData* materialData) override;
 	/* End IStaicMeshRenderData interface*/
 
 	bool Init();
@@ -27,7 +28,7 @@ private:
 
 public:
 	// [CB(b0) | CB(b1) | SRV(t0)]
-	static const uint32 DESCRIPTOR_COUNT_FOR_DRAW = 1;
+	static const uint32 DESCRIPTOR_COUNT_FOR_DRAW = 3;
 
 private:
 	static ID3D12RootSignature* sm_RootSig;
@@ -45,5 +46,8 @@ private:
 
 	// Transform Data
 	TransformRenderData m_transformData = {};
+
+	// Material Data
+	MaterialRenderData m_materialData = {};
 };
 

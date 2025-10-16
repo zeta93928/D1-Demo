@@ -9,6 +9,15 @@
 #include <d3dx12.h>
 #include <dxgidebug.h>
 #include <d3dcompiler.h>
+#include <directxtex/directxtex.h>
+
+// STL
+#include <unordered_map>
+#include <vector>
+#include <queue>
+#include <map>
+#include <stack>
+#include <queue>
 
 // Inner
 #include "../../Interface/IRenderer.h"
@@ -20,4 +29,5 @@
 #include "D3D12ResourceManager.h"
 #include "ConstantBufferManager.h"
 #include "DescriptorPool.h"
+#include "DescriptorAllocator.h"
 #include "ConstantBufferPool.h"

@@ -6,5 +6,6 @@ class RenderProxy
 public:
 	void EnqueueGlobalData(const GlobalRenderData& data);
 	void EnqueueTransformData(IStaticMeshRenderData* mesh, const TransformRenderData& data);
+	void EnqueueMaterialData(IStaticMeshRenderData* mesh, const MaterialRenderData& data);
 };
 

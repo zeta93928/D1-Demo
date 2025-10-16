@@ -11,6 +11,9 @@ cbuffer TransformBuffer : register(b1)
     matrix world;
 }
 
+Texture2D AlbedoMap : register(t0);
+SamplerState PointWrapSS : register(s0);
+
 struct VertexTextureNormalTangent
 {
     float4 posModel : POSITION;
@@ -47,5 +50,5 @@ MeshOutput VSMain(VertexTextureNormalTangent input)
 
 float4 PSMain(MeshOutput input) : SV_TARGET
 {
-    return float4(0, 0, 0, 0);
+    return AlbedoMap.Sample(PointWrapSS, input.uv);
 }

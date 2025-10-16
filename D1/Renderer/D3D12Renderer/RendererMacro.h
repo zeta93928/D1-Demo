@@ -4,6 +4,7 @@
 #define RESOURCE_MANAGER	GRenderer->GetResourceManager()
 #define CONST_MANAGER		GRenderer->GetConstantBufferManager()
 #define DESC_POOL			GRenderer->GetDescriptorPool()
+#define DESC_ALLOCATOR		GRenderer->GetDescriptorAllocator()		
 
 #define SRV_DESC_SIZE		GRenderer->GetSRVDescriptorSize()
 #define RTV_DESC_SIZE		GRenderer->GetRTVDescriptorSize()

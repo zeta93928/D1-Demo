@@ -1,8 +1,24 @@
 #include "pch.h"
 #include "EngineBody.h"
 
+/*-----------------------------------------------------------------------------------
+									   Libs
+-------------------------------------------------------------------------------------*/
+#ifdef _DEBUG
+#pragma comment(lib, "E:/D1-Demo/D1/ThirdParty/Libs/DirectXTex/DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "../ThirdParty/Libs/DriectXTex/DirectXTex.lib")
+#endif
+
+/*-----------------------------------------------------------------------------------
+								   Nvidia option
+-------------------------------------------------------------------------------------*/
 extern "C" { __declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001; }
 
+
+/*-----------------------------------------------------------------------------------
+								  D3D12 SDK Agility
+-------------------------------------------------------------------------------------*/
 extern "C" { __declspec(dllexport) extern const UINT D3D12SDKVersion = 618; }
 
 #if defined(_M_ARM64EC)

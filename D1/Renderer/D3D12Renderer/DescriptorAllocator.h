@@ -10,6 +10,8 @@
 class DescriptorAllocator
 {
 public:
+	~DescriptorAllocator();
+
 	bool Create(uint32 maxNum, D3D12_DESCRIPTOR_HEAP_FLAGS flag = D3D12_DESCRIPTOR_HEAP_FLAG_NONE);
 	
 	// Deciptor Chunk 에서 핸들을 할당하는 함수
@@ -18,8 +20,16 @@ public:
 	// Deciptor Chunk 에 핸들을 반환하는 함수
 	void FreeDescriptorHandle(D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle);
 
+	// Validate Handle
+	bool CheckHandle(const D3D12_CPU_DESCRIPTOR_HANDLE& cpuHandle);
+
+private:
+	bool CheckFree();
+
 private:
 	ID3D12DescriptorHeap* m_heap = nullptr;
 	uint32 m_desciptorSize = 0;
+	std::queue<uint32> m_idGenerator = {};
+	uint32 m_id = 0;
 };
 

@@ -8,6 +8,7 @@ struct IStaticMeshRenderData
 									  /* Indices */ void* indices, uint32 indexNum) = 0;
 	virtual void __stdcall Release() = 0;
 	virtual void __stdcall SetTransformData(TransformRenderData* transformData) = 0;
+	virtual void __stdcall SetMaterialData(MaterialRenderData* materialData) = 0;
 };
 
 struct ISkeletalMeshRenderData
@@ -33,4 +34,7 @@ struct IRenderer
 	virtual void __stdcall	RenderSkeletalMeshRenderData() = 0;
 
 	virtual void __stdcall	SetGlobalRenderData(GlobalRenderData* globalData) = 0;
+	
+	virtual void* __stdcall	AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img) = 0;
+	virtual void __stdcall  ReleaseTextureHandle(const WCHAR* name) = 0;
 };

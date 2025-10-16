@@ -1,8 +1,8 @@
 #pragma once
 
-enum : uint8 
+enum : uint8
 {
-	SWAP_CHAIN_FRAME_COUNT = 2 
+	SWAP_CHAIN_FRAME_COUNT = 2
 };
 
 class D3D12ResourceManager;
@@ -18,7 +18,7 @@ public:
 
 	virtual bool __stdcall Init(HWND hwnd, bool enableDebugLayer, bool enalbeGBV) override;
 	virtual void __stdcall Release() override;
-	
+
 	virtual void __stdcall BeginRender() override;
 	virtual void __stdcall EndRender() override;
 	virtual void __stdcall Present() override;
@@ -33,16 +33,20 @@ public:
 
 	virtual void __stdcall SetGlobalRenderData(GlobalRenderData* globalData) override;
 
+	virtual void* __stdcall	AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img) override;
+	virtual void __stdcall ReleaseTextureHandle(const WCHAR* name) override;
+
 public:
 	ID3D12Device5* GetDevice() { return m_device; }
 	D3D12ResourceManager* GetResourceManager() { return m_resourceManager; }
 	DescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
+	DescriptorAllocator* GetDescriptorAllocator() { return m_descriptorAllocator; }
 	const GlobalRenderData& GetGlobalRenderData() { return m_globalRenderData; }
 
 	uint32 GetSRVDescriptorSize() { return m_srvDescriptorSize; }
 	uint32 GetRTVDescriptorSize() { return m_rtvDescriptorSize; }
 	uint32 GetDSVDescriptorSize() { return m_dsvDescriptorSize; }
-	
+
 	// 매니저로 관리 필요
 	ConstantBufferManager* GetConstantBufferManager() { return m_constantBufferManager; }
 

@@ -14,3 +14,10 @@ void RenderProxy::EnqueueTransformData(IStaticMeshRenderData* mesh, const Transf
 	memcpy(&rd, &data, sizeof(TransformRenderData));
 	mesh->SetTransformData(&rd);
 }
+
+void RenderProxy::EnqueueMaterialData(IStaticMeshRenderData* mesh, const MaterialRenderData& data)
+{
+	MaterialRenderData rd = {};
+	memcpy(&rd, &data, sizeof(MaterialRenderData));
+	mesh->SetMaterialData(&rd);
+}
