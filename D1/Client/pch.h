@@ -21,3 +21,4 @@
 
 
 
+MAKE_SHARED_REF(SceneInGame);

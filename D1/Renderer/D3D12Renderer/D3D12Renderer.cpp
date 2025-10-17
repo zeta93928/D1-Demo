@@ -18,7 +18,7 @@ D3D12Renderer::~D3D12Renderer()
     CleanUp();
 }
 
-bool __stdcall D3D12Renderer::Init(HWND hwnd, bool enableDebugLayer, bool enalbeGBV)
+bool D3D12Renderer::Init(HWND hwnd, bool enableDebugLayer, bool enalbeGBV)
 {
 	BOOL	bResult = FALSE;
 
@@ -212,7 +212,7 @@ lb_exit:
 		// Constant Buffer Pool »ı¼º
 		{
 			m_constantBufferManager[i] = new ConstantBufferManager;
-			m_constantBufferManager[i]->CreatePool(MAX_DRAW_COUNT_PER_FRAME* PrimitiveRenderData::DESCRIPTOR_CB_COUNT);
+			m_constantBufferManager[i]->CreatePool(0);
 		}
 	}
 
@@ -243,12 +243,12 @@ lb_return:
 	return bResult;
 }
 
-void __stdcall D3D12Renderer::Release()
+void D3D12Renderer::Release()
 {
 	delete this;
 }
 
-void __stdcall D3D12Renderer::BeginRender()
+void D3D12Renderer::BeginRender()
 {
 	ID3D12CommandAllocator* cmdAllocator = m_cmdAllocator[m_curContex];
 	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
@@ -278,7 +278,7 @@ void __stdcall D3D12Renderer::BeginRender()
 	UpdateGlobalData();
 }
 
-void __stdcall D3D12Renderer::EndRender()
+void D3D12Renderer::EndRender()
 {
 	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
 
@@ -290,7 +290,7 @@ void __stdcall D3D12Renderer::EndRender()
 	m_cmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 }
 
-void __stdcall D3D12Renderer::Present()
+void D3D12Renderer::Present()
 {
 	Fence();
 
@@ -393,7 +393,7 @@ bool __stdcall D3D12Renderer::UpdateWindowSize(uint32 width, uint32 height)
 	return true;
 }
 
-IPrimitiveRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
+IPrimitiveRenderData* D3D12Renderer::CreateStaticMeshRenderData()
 {
 	PrimitiveRenderData* data = new PrimitiveRenderData;
 	assert(data);
@@ -402,12 +402,12 @@ IPrimitiveRenderData* __stdcall D3D12Renderer::CreateStaticMeshRenderData()
 	return data;
 }
 
-ISkeletalMeshRenderData* __stdcall D3D12Renderer::CreateSkeletalMeshRenderData()
+ISkeletalMeshRenderData* D3D12Renderer::CreateSkeletalMeshRenderData()
 {
     return nullptr;
 }
 
-void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IPrimitiveRenderData* renderData)
+void D3D12Renderer::RenderPrimitiveData(IPrimitiveRenderData* renderData, void* instanceData, uint32 instanceCount)
 {
 	ID3D12GraphicsCommandList* cmdList = m_cmdList[m_curContex];
 
@@ -418,20 +418,20 @@ void __stdcall D3D12Renderer::RenderStaticMeshRenderData(IPrimitiveRenderData* r
 
 	PrimitiveRenderData* inRenderData = (PrimitiveRenderData*)renderData;
 
-	inRenderData->Draw(cmdList);
+	inRenderData->DrawInstance(cmdList, instanceData, instanceCount);
 }
 
-void __stdcall D3D12Renderer::RenderSkeletalMeshRenderData()
+void D3D12Renderer::RenderSkeletalMeshData()
 {
 }
 
-void __stdcall D3D12Renderer::SetGlobalRenderData(GlobalRenderData* renderData)
+void D3D12Renderer::SetGlobalRenderData(GlobalRenderData* renderData)
 {
 	assert(renderData);
 	memcpy(&m_globalRenderData, renderData, sizeof(GlobalRenderData));
 }
 
-void* __stdcall D3D12Renderer::AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img)
+void* D3D12Renderer::AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img)
 {
 	void* handle = RESOURCE_MANAGER->BindTextureData(name, img);
 	assert(handle);

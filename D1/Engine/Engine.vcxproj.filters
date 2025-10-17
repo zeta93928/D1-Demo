@@ -97,6 +97,15 @@
     <ClInclude Include="..\Common\Enum.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="InstancingManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneBase.h">
+      <Filter>SceneBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Pch">
@@ -131,6 +140,9 @@
     </Filter>
     <Filter Include="Manager">
       <UniqueIdentifier>{1de182e0-ef08-4b7c-92c7-3004f4c6b1d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneBase">
+      <UniqueIdentifier>{2121f8b1-c59b-4f11-9836-e0a5af603ba8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +214,15 @@
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Component</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancingManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneBase.cpp">
+      <Filter>SceneBase</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

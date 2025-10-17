@@ -111,13 +111,6 @@ void EngineBody::Tick()
 	TimeManager::Get().Update();
 	InputManager::Get().Update();
 
-	/*m_accTime += TimeManager::Get().GetDeltaTime();
-	
-	if (m_accTime >= 0.01666f)
-	{
-		m_accTime -= 0.01666f;
-	}*/
-
 	GRenderer->BeginRender();
 	{
 		m_gameDesc.app->Update();
@@ -216,5 +209,6 @@ void EngineBody::UpdateGlobalData()
 	globalData.proj = CameraComponent::sm_projMat;
 	globalData.viewInv = CameraComponent::sm_viewMat.Invert();
 	globalData.viewProj = globalData.view * globalData.proj;
+
 	RenderProxy::Get().EnqueueGlobalData(globalData);
 }

@@ -24,7 +24,8 @@ void MeshAsset::GenerateQuad()
 
 	// CPU 측 데이터를 Renderer DLL 로 넘긴다.
 	// Index Buffer 1개의 Size 는 uint16 으로 고정이므로 파라미터로 전달하지 않는다
-	m_primitiveRenderData->CreateMesh(m_geometry->GetVertexData(), sizeof(VertexTextureNormalTangentData), m_geometry->GetVertexCount(), m_geometry->GetIndexData(), m_geometry->GetIndexCount());
+	m_primitiveRenderData->CreateMesh(m_geometry->GetVertexData(), sizeof(VertexTextureNormalTangentData), m_geometry->GetVertexCount(), m_geometry->GetIndexData(), m_geometry->GetIndexCount(),
+									  sizeof(InstanceData));
 }
 
 void MeshAsset::GenerateCube()
@@ -34,7 +35,8 @@ void MeshAsset::GenerateCube()
 
 	m_primitiveRenderData = GRenderer->CreateStaticMeshRenderData();
 
-	m_primitiveRenderData->CreateMesh(m_geometry->GetVertexData(), sizeof(VertexTextureNormalTangentData), m_geometry->GetVertexCount(), m_geometry->GetIndexData(), m_geometry->GetIndexCount());
+	m_primitiveRenderData->CreateMesh(m_geometry->GetVertexData(), sizeof(VertexTextureNormalTangentData), m_geometry->GetVertexCount(), m_geometry->GetIndexData(), m_geometry->GetIndexCount(),
+								      sizeof(InstanceData));
 }
 
 void MeshAsset::GenerateGrid(int32 sizeX, int32 sizeZ)

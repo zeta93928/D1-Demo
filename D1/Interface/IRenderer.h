@@ -4,8 +4,9 @@
 
 struct IPrimitiveRenderData
 {
-	virtual void  CreateMesh(/* Vertices */ void* vertices, uint32 typeSize, uint32 vertexNum, 
-							 /* Indices */ void* indices, uint32 indexNum) = 0;
+	virtual void  CreateMesh(void* vertices, uint32 vertexTypeSize, uint32 vertexNum, /* Vertex */
+							 void* indices, uint32 indexNum, /* Index */
+							 uint32 instanceTypeSize = 0) = 0;
 	virtual void  Release() = 0;
 	virtual void  SetTransformData(TransformRenderData* transformData) = 0;
 	virtual void  SetMaterialData(MaterialRenderData* materialData) = 0;
@@ -35,8 +36,8 @@ struct IRenderer
 	virtual IPrimitiveRenderData*	 	CreateStaticMeshRenderData() = 0;
 	virtual ISkeletalMeshRenderData* 	CreateSkeletalMeshRenderData() = 0;
 
-	virtual void 	RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) = 0;
-	virtual void 	RenderSkeletalMeshRenderData() = 0;
+	virtual void 	RenderPrimitiveData(IPrimitiveRenderData* renderData, void* instanceData, uint32 instanceCount) = 0;
+	virtual void 	RenderSkeletalMeshData() = 0;
 
 	virtual void 	SetGlobalRenderData(GlobalRenderData* globalData) = 0;
 	

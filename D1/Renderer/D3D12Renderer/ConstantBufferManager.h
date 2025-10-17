@@ -19,7 +19,7 @@ class ConstantBufferManager
 	TypeSizeEntry TypeSizeTable[MAX_CONSTANT_BUFFER_COUNT] =
 	{
 		{ConstantBufferType::Global, sizeof(GlobalRenderData)},
-		{ConstantBufferType::Transform, sizeof(TransformRenderData)},
+		// {ConstantBufferType::Transform, sizeof(TransformRenderData)},
 	};
 
 public:

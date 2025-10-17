@@ -2,7 +2,6 @@
 
 enum 
 {
-	B1,
 	T0,
 };
 
@@ -13,25 +12,32 @@ public:
 	~PrimitiveRenderData();
 
 	/* Start IStaicMeshRenderData interface */
-	virtual void __stdcall CreateMesh(void* vertices, uint32 typeSize, uint32 vertexNum, void* indices, uint32 indexNum) override;
-	virtual void __stdcall Release() override;
-	virtual void __stdcall SetTransformData(TransformRenderData* transformData) override;
-	virtual void __stdcall SetMaterialData(MaterialRenderData* materialData) override;
+	virtual void CreateMesh(void* vertices, uint32 vertexTypeSize, uint32 vertexNum, void* indices, uint32 indexNum,
+						    uint32 instanceTypeSize) override;
+	virtual void Release() override;
+	virtual void SetTransformData(TransformRenderData* transformData) override;
+	virtual void SetMaterialData(MaterialRenderData* materialData) override;
 	/* End IStaicMeshRenderData interface*/
 
 	bool Init();
-	void Draw(ID3D12GraphicsCommandList* pCommandList);
+	void Draw(ID3D12GraphicsCommandList* cmdList);
+	void DrawInstance(ID3D12GraphicsCommandList* cmdList, void* instanceData, uint32 instanceCount);
 
 private:
 	void CleanUp();
 
+	void CreateInstanceBuufer(uint32 instanceCount);
+	void CleanUpInstanceBuffer();
+
 public:
-	// [CB(b0): Global | CB(b1) | SRV(t0)]
-	static const uint32 DESCRIPTOR_CB_COUNT = 1;
+	// [CB(b0): Global  | SRV(t0)]
 	static const uint32 DESCRIPTOR_SRV_COUNT = 1;
-	static const uint32 DESCRIPTOR_COUNT_FOR_DRAW = DESCRIPTOR_CB_COUNT + DESCRIPTOR_SRV_COUNT;
+	static const uint32 DESCRIPTOR_COUNT_FOR_DRAW = DESCRIPTOR_SRV_COUNT;
 
 private:
+	// @TODO:
+	// 모든 매쉬 관련 랜더 데이터가 공용으로 들고 있을 수 있도록
+	// StaticMesh, SkeletalMesh 에서도 쓸수 있도록 구조 변경 필요
 	static ID3D12RootSignature* sm_RootSig;
 	static ID3D12PipelineState* sm_PSO;
 	static DWORD m_refCount;
@@ -45,10 +51,19 @@ private:
 	D3D12_INDEX_BUFFER_VIEW m_indexBufferView = {};
 	uint32 m_indexCount = 0;
 
-	// Transform Data
-	TransformRenderData m_transformData = {};
+	// Instance Data
+	ID3D12Resource* m_instanceBuffer = nullptr;
+	D3D12_VERTEX_BUFFER_VIEW m_instanceBufferView = {};
+	uint32 m_maxInstanceCount = 500;
+	uint32 m_instanceTypeSize = 0;
 
 	// Material Data
 	MaterialRenderData m_materialData = {};
+
+	// Transform Data
+	// @TODO:
+	// 변경 필요
+	// Client 에서 다르게 전달되어야 함 여기서 공용으로 관리 X
+	TransformRenderData m_transformData = {};
 };
 

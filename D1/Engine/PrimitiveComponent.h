@@ -2,17 +2,20 @@
 
 #include "ComponentBase.h"
 
+struct InstanceList;
+
 class PrimitiveComponent : public ComponentBase
 {
 public:
 	PrimitiveComponent();
 	virtual ~PrimitiveComponent();
 
-	virtual void Update() override;
-	virtual void LateUpdate() override;
-
 	void SetMeshAsset(MeshAssetRef mesh) { m_mesh = mesh; }
 	void SetMaterialAsset(MaterialAssetRef material);
+
+	void RenderInstancing(InstanceList& instanceList);
+
+	InstanceID GetInstanceID();
 
 private:
 	MeshAssetRef m_mesh;

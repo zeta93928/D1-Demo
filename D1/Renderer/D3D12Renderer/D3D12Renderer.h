@@ -30,8 +30,8 @@ public:
 	IPrimitiveRenderData* CreateStaticMeshRenderData() override;
 	ISkeletalMeshRenderData* CreateSkeletalMeshRenderData() override;
 
-	virtual void RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) override;
-	virtual void RenderSkeletalMeshRenderData() override;
+	virtual void RenderPrimitiveData(IPrimitiveRenderData* renderData, void* instanceData, uint32 instanceCount) override;
+	virtual void RenderSkeletalMeshData() override;
 
 	virtual void SetGlobalRenderData(GlobalRenderData* globalData) override;
 

@@ -38,9 +38,8 @@ bool PrimitiveRenderData::Init()
 		CD3DX12_DESCRIPTOR_RANGE rangesGlobal[1] = {};
 		rangesGlobal[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0); // b0: Global
 
-		CD3DX12_DESCRIPTOR_RANGE rangesPerObj[2] = {};
-		rangesPerObj[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1); // b1: transform
-		rangesPerObj[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0: texture
+		CD3DX12_DESCRIPTOR_RANGE rangesPerObj[1] = {};
+		rangesPerObj[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0: texture
 		
 		CD3DX12_ROOT_PARAMETER rootParameters[2] = {};
 		rootParameters[0].InitAsDescriptorTable(_countof(rangesGlobal), rangesGlobal, D3D12_SHADER_VISIBILITY_ALL);
@@ -113,10 +112,15 @@ bool PrimitiveRenderData::Init()
 		// Define the vertex input layout.
 		D3D12_INPUT_ELEMENT_DESC inputElementDescs[] =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+			{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	0,		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		0 },
+			{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	12,		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		0 },
+			{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	20,		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		0 },
+			{ "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	32,		D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,		0 },
+
+			{ "WORLD",    0, DXGI_FORMAT_R32G32B32A32_FLOAT,	1,	0,		D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,	1 },
+			{ "WORLD",    1, DXGI_FORMAT_R32G32B32A32_FLOAT,	1,	16,		D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,	1 },
+			{ "WORLD",    2, DXGI_FORMAT_R32G32B32A32_FLOAT,	1,	32,		D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,	1 },
+			{ "WORLD",    3, DXGI_FORMAT_R32G32B32A32_FLOAT,	1,	48,		D3D12_INPUT_CLASSIFICATION_PER_INSTANCE_DATA,	1 },
 		};
 
 
@@ -160,9 +164,9 @@ bool PrimitiveRenderData::Init()
 	return true;
 }
 
-void __stdcall PrimitiveRenderData::CreateMesh(void* vertices, uint32 typeSize, uint32 vertexNum, void* indices, uint32 indexNum)
+void PrimitiveRenderData::CreateMesh(void* vertices, uint32 vertexTypeSize, uint32 vertexNum, void* indices, uint32 indexNum, uint32 instanceTypeSize)
 {
-	if (FAILED(RESOURCE_MANAGER->CreateVertexBuffer(typeSize, vertexNum, &m_vertexBufferView, &m_vertexBuffer, vertices)))
+	if (FAILED(RESOURCE_MANAGER->CreateVertexBuffer(vertexTypeSize, vertexNum, &m_vertexBufferView, &m_vertexBuffer, vertices)))
 	{
 		__debugbreak();
 	}
@@ -173,20 +177,23 @@ void __stdcall PrimitiveRenderData::CreateMesh(void* vertices, uint32 typeSize, 
 	}
 
 	m_indexCount = indexNum;
+	m_instanceTypeSize = instanceTypeSize;
+
+	CreateInstanceBuufer(m_maxInstanceCount);
 }
 
-void __stdcall PrimitiveRenderData::Release()
+void PrimitiveRenderData::Release()
 {
 	delete this;
 }
 
-void __stdcall PrimitiveRenderData::SetTransformData(TransformRenderData* transformData)
+void PrimitiveRenderData::SetTransformData(TransformRenderData* transformData)
 {
 	assert(transformData);
 	memcpy(&m_transformData, transformData, sizeof(TransformRenderData));
 }
 
-void __stdcall PrimitiveRenderData::SetMaterialData(MaterialRenderData* materialData)
+void PrimitiveRenderData::SetMaterialData(MaterialRenderData* materialData)
 {
 	assert(materialData);
 	memcpy(&m_materialData, materialData, sizeof(MaterialRenderData));
@@ -194,6 +201,8 @@ void __stdcall PrimitiveRenderData::SetMaterialData(MaterialRenderData* material
 
 void PrimitiveRenderData::CleanUp()
 {
+	CleanUpInstanceBuffer();
+
 	if (m_vertexBuffer)
 	{
 		m_vertexBuffer->Release();
@@ -226,34 +235,109 @@ void PrimitiveRenderData::CleanUp()
 	}
 }
 
+void PrimitiveRenderData::CreateInstanceBuufer(uint32 instanceCount)
+{
+	if (FAILED(RESOURCE_MANAGER->CreateUploadBuffer(m_instanceTypeSize, instanceCount, m_instanceBufferView, &m_instanceBuffer)))
+	{
+		__debugbreak();
+	}
+}
+
+void PrimitiveRenderData::CleanUpInstanceBuffer()
+{
+	if (m_instanceBuffer)
+	{
+		m_instanceBuffer->Release();
+		m_instanceBuffer = nullptr;
+	}
+}
+
 void PrimitiveRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
 {
-	// Descriptor Table (Shader visible) 용 
-	// Descriptor Allocator 와 Constant Buffer Pool 로 부터 할당받은 descriptor heap 을 해당 Pool 에 Copy 한다.
-	ID3D12DescriptorHeap* heap = DESC_POOL->GetDecriptorHeap();
+	//// Descriptor Table (Shader visible) 용 
+	//// Descriptor Allocator 와 Constant Buffer Pool 로 부터 할당받은 descriptor heap 을 해당 Pool 에 Copy 한다.
+	//ID3D12DescriptorHeap* heap = DESC_POOL->GetDecriptorHeap();
 
+	//CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
+	//CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle = {};
+
+	//if (!DESC_POOL->AllocDescriptorTable(cpuHandle, gpuHandle, DESCRIPTOR_COUNT_FOR_DRAW))
+	//{
+	//	__debugbreak();
+	//}
+
+	//ContantBufferEntry* cbEntry = nullptr;
+	//{
+	//	// Transform Constant Buffer Data
+	//	ConstantBufferPool* transform_CB_Pool = CONSTANT_POOL(ConstantBufferType::Transform);
+	//	{
+	//		cbEntry = transform_CB_Pool->AllocEntry();
+	//		assert(cbEntry);
+
+	//		TransformRenderData* transformCB = (TransformRenderData*)cbEntry->sysMem;
+	//		transformCB->world = m_transformData.world.Transpose();
+
+	//		CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, B1, SRV_DESC_SIZE);
+	//		DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//	}
+	//}
+
+	//// SRV
+	//{
+	//	TextureDesc* albedo = (TextureDesc*)m_materialData.albedo;
+	//	CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, T0, SRV_DESC_SIZE);
+	//	DEVICE->CopyDescriptorsSimple(1, cbvDest, albedo->srvHanlde, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	//}
+
+	//// RootSignature 설정
+	//cmdList->SetGraphicsRootSignature(sm_RootSig);
+
+	//// DescriptorHeap 설정
+	//cmdList->SetDescriptorHeaps(1, &heap);
+
+	//// PSO 설정
+	//cmdList->SetPipelineState(sm_PSO);
+
+	/////////////////////////////////////////////////////////////////////////////
+	////	Descriptor Table Bind GPU
+	/////////////////////////////////////////////////////////////////////////////
+	//{
+	//	cmdList->SetGraphicsRootDescriptorTable(0, GRenderer->m_globalCB_GPU);
+	//	cmdList->SetGraphicsRootDescriptorTable(1, gpuHandle);
+	//}
+
+	//// Input Assemble and Draw call
+	//cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//cmdList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+	//cmdList->IASetIndexBuffer(&m_indexBufferView);
+	//cmdList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
+}
+
+void PrimitiveRenderData::DrawInstance(ID3D12GraphicsCommandList* cmdList, void* instanceData, uint32 instanceCount)
+{
+	if (instanceCount > m_maxInstanceCount)
+	{
+		CleanUpInstanceBuffer();
+		
+		CreateInstanceBuufer(instanceCount);
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	//	Upload Instance Buffer
+	///////////////////////////////////////////////////////////////////////////
+	BYTE* mappedData = nullptr;
+	CD3DX12_RANGE readRange(0, 0); // CPU 읽기 안함
+	m_instanceBuffer->Map(0, &readRange, reinterpret_cast<void**>(&mappedData));
+	memcpy(mappedData, instanceData, instanceCount * m_instanceTypeSize);
+	m_instanceBuffer->Unmap(0, nullptr);
+
+	ID3D12DescriptorHeap* heap = DESC_POOL->GetDecriptorHeap();
 	CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle = {};
 	CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle = {};
 
 	if (!DESC_POOL->AllocDescriptorTable(cpuHandle, gpuHandle, DESCRIPTOR_COUNT_FOR_DRAW))
 	{
 		__debugbreak();
-	}
-
-	ContantBufferEntry* cbEntry = nullptr;
-	{
-		// Transform Constant Buffer Data
-		ConstantBufferPool* transform_CB_Pool = CONSTANT_POOL(ConstantBufferType::Transform);
-		{
-			cbEntry = transform_CB_Pool->AllocEntry();
-			assert(cbEntry);
-
-			TransformRenderData* transformCB = (TransformRenderData*)cbEntry->sysMem;
-			transformCB->world = m_transformData.world.Transpose();
-
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cbvDest(cpuHandle, B1, SRV_DESC_SIZE);
-			DEVICE->CopyDescriptorsSimple(1, cbvDest, cbEntry->cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-		}
 	}
 
 	// SRV
@@ -263,13 +347,8 @@ void PrimitiveRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
 		DEVICE->CopyDescriptorsSimple(1, cbvDest, albedo->srvHanlde, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	}
 
-	// RootSignature 설정
 	cmdList->SetGraphicsRootSignature(sm_RootSig);
-
-	// DescriptorHeap 설정
 	cmdList->SetDescriptorHeaps(1, &heap);
-
-	// PSO 설정
 	cmdList->SetPipelineState(sm_PSO);
 
 	///////////////////////////////////////////////////////////////////////////
@@ -279,10 +358,20 @@ void PrimitiveRenderData::Draw(ID3D12GraphicsCommandList* cmdList)
 		cmdList->SetGraphicsRootDescriptorTable(0, GRenderer->m_globalCB_GPU);
 		cmdList->SetGraphicsRootDescriptorTable(1, gpuHandle);
 	}
+	
+	///////////////////////////////////////////////////////////////////////////
+	//	Input Assemble and Draw call
+	///////////////////////////////////////////////////////////////////////////
+	{
+		D3D12_VERTEX_BUFFER_VIEW vertexBuffers[] =
+		{
+			m_vertexBufferView,
+			m_instanceBufferView,
+		};
 
-	// Input Assemble and Draw call
-	cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	cmdList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
-	cmdList->IASetIndexBuffer(&m_indexBufferView);
-	cmdList->DrawIndexedInstanced(m_indexCount, 1, 0, 0, 0);
+		cmdList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		cmdList->IASetVertexBuffers(0, 2, vertexBuffers);
+		cmdList->IASetIndexBuffer(&m_indexBufferView);
+		cmdList->DrawIndexedInstanced(m_indexCount, instanceCount, 0, 0, 0);
+	}
 }

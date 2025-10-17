@@ -6,6 +6,7 @@
 
 // Renderer Type
 #include "VertexData.h"
+#include "InstanceData.h"
 
 // Interface
 #include "IRenderer.h"
@@ -25,6 +26,8 @@
 #include "RenderProxy.h"
 #include "InputManager.h"
 #include "TimeManager.h"
+#include "SceneManager.h"
+#include "InstancingManager.h"
 
 // Disable Warning
 #pragma warning(disable:4244)

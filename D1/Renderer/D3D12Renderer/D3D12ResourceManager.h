@@ -22,6 +22,7 @@ public:
 	// Vertex and Index
 	HRESULT CreateVertexBuffer(UINT SizePerVertex, DWORD dwVertexNum, D3D12_VERTEX_BUFFER_VIEW* pOutVertexBufferView, ID3D12Resource** ppOutBuffer, void* pInitData);
 	HRESULT CreateIndexBuffer(DWORD dwIndexNum, D3D12_INDEX_BUFFER_VIEW* pOutIndexBufferView, ID3D12Resource** ppOutBuffer, void* pInitData);
+	HRESULT CreateUploadBuffer(uint32 instanceTypeSize, uint32 instanceCount, OUT D3D12_VERTEX_BUFFER_VIEW& instanceBufferView, OUT ID3D12Resource** buffer);
 	
 	// Texture
 	TextureDesc* BindTextureData(const WCHAR* name, const DirectX::ScratchImage* img);
@@ -50,6 +51,7 @@ private:
 	ID3D12Fence* m_fence = nullptr;
 	UINT64 m_fenceValue = 0;
 
+	// Texture
 	std::unordered_map<std::wstring, TextureDesc*> m_textureCache;
 };
 

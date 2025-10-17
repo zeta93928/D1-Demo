@@ -16,8 +16,7 @@ public:
 	/* End IEngine Interface */
 
 private:
-	ActorRef m_cameraActor = nullptr;
-	Vector<ActorRef> m_meshActors = {};
+	
 };
 
 

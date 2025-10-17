@@ -5,6 +5,6 @@
 enum class ConstantBufferType : uint8
 {
 	Global,
-	Transform,
+	// Transform,
 	End,
 };

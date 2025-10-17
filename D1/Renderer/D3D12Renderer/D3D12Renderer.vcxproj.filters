@@ -102,6 +102,9 @@
     <ClInclude Include="..\Common\VertexData.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\InstanceData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -144,6 +147,9 @@
       <Filter>RenderData</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\VertexData.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\InstanceData.cpp">
       <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>

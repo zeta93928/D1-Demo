@@ -18,7 +18,7 @@ bool D3D12ResourceManager::Init()
 
 	if (FAILED(DEVICE->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_cmdQueue))))
 	{
-		__debugbreak();	
+		__debugbreak();
 	}
 
 	CreateCommandList();
@@ -113,7 +113,8 @@ lb_return:
 		pUploadBuffer->Release();
 		pUploadBuffer = nullptr;
 	}
-	return hr;
+	
+	return true;
 }
 
 HRESULT D3D12ResourceManager::CreateIndexBuffer(DWORD dwIndexNum, D3D12_INDEX_BUFFER_VIEW* pOutIndexBufferView, ID3D12Resource** ppOutBuffer, void* pInitData)
@@ -202,6 +203,61 @@ lb_return:
 		pUploadBuffer->Release();
 		pUploadBuffer = nullptr;
 	}
+	return hr;
+}
+
+HRESULT D3D12ResourceManager::CreateUploadBuffer(uint32 instanceTypeSize, uint32 instanceCount, OUT D3D12_VERTEX_BUFFER_VIEW& instanceBufferView, OUT ID3D12Resource** buffer)
+{
+	HRESULT hr = S_OK;
+
+	D3D12_VERTEX_BUFFER_VIEW instBufferView = {};
+	uint32 instanceBufferSize = instanceTypeSize * instanceCount;
+
+	ID3D12Resource* uploadBuffer = nullptr;
+
+	if (FAILED(m_cmdAllocator->Reset()))
+	{
+		__debugbreak();
+
+	}
+
+	if (FAILED(m_cmdList->Reset(m_cmdAllocator, nullptr)))
+	{
+		__debugbreak();
+	}
+
+	hr = DEVICE->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(instanceBufferSize),
+		D3D12_RESOURCE_STATE_COMMON,
+		nullptr,
+		IID_PPV_ARGS(&uploadBuffer));
+
+	if (FAILED(hr))
+	{
+		__debugbreak();
+		goto lb_return;
+	}
+
+	m_cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(uploadBuffer, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_GENERIC_READ));
+
+	m_cmdList->Close();
+
+	ID3D12CommandList* ppCommandLists[] = { m_cmdList };
+	m_cmdQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+	Fence();
+	WaitForFenceValue();
+	
+	instBufferView.BufferLocation = uploadBuffer->GetGPUVirtualAddress();
+	instBufferView.StrideInBytes = instanceTypeSize;
+	instBufferView.SizeInBytes = instanceBufferSize;
+	
+	instanceBufferView = instBufferView;
+	*buffer = uploadBuffer;
+
+lb_return:
 	return hr;
 }
 

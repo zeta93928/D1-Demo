@@ -6,11 +6,6 @@ cbuffer GlobalBuffer : register(b0)
     matrix viewInv;
 };
 
-cbuffer TransformBuffer : register(b1)
-{
-    matrix world;
-}
-
 Texture2D AlbedoMap : register(t0);
 SamplerState PointWrapSS : register(s0);
 
@@ -20,6 +15,8 @@ struct VertexTextureNormalTangent
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
+    
+    matrix world : WORLD;
 };
 
 struct MeshOutput
@@ -35,7 +32,7 @@ MeshOutput VSMain(VertexTextureNormalTangent input)
 {
     MeshOutput output;
 
-    output.posProj = mul(input.posModel, world);
+    output.posProj = mul(input.posModel, input.world);
     output.posWorld = output.posProj.xyz;
     
     output.posProj = mul(output.posProj, view);

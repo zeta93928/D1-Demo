@@ -176,14 +176,17 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryHelper.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="InstancingManager.h" />
     <ClInclude Include="MaterialAsset.h" />
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="MonoBehaviour.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RenderProxy.h" />
+    <ClInclude Include="SceneBase.h" />
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="PrimitiveComponent.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="TextureAsset.h" />
     <ClInclude Include="TimeManager.h" />
@@ -204,6 +207,7 @@
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GeometryHelper.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="InstancingManager.cpp" />
     <ClCompile Include="MaterialAsset.cpp" />
     <ClCompile Include="MeshAsset.cpp" />
     <ClCompile Include="Model.cpp" />
@@ -215,8 +219,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RenderProxy.cpp" />
+    <ClCompile Include="SceneBase.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="PrimitiveComponent.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="TextureAsset.cpp" />
     <ClCompile Include="TimeManager.cpp" />

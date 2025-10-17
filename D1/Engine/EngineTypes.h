@@ -9,6 +9,8 @@
 #include <queue>
 #include <list>
 #include <array>
+#include <set>
+#include <unordered_set>
 
 // Smart Pointer
 template<typename T>
@@ -46,6 +48,12 @@ template<typename K, typename T>
 using Map = std::map<K, T>;
 
 template<typename T>
+using HashSet = std::unordered_set<T>;
+
+template<typename T>
+using Set = std::set<T>;
+
+template<typename T>
 using List = std::list<T>;
 
 template<typename T>
@@ -69,3 +77,6 @@ MAKE_SHARED_REF(MeshAsset);
 MAKE_SHARED_REF(TextureAsset);
 MAKE_SHARED_REF(MaterialAsset);
 MAKE_SHARED_REF(Model);
+MAKE_SHARED_REF(SceneBase);
+
+using InstanceID = std::pair<uint64, uint64>;

@@ -32,6 +32,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{a82453b5-f56b-445e-b584-07b3b82d77c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{300f62af-c312-4478-bd1b-18ffb73ccf0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -67,6 +70,9 @@
     <ClInclude Include="CameraScript.h">
       <Filter>Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="SceneInGame.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -83,6 +89,9 @@
     </ClCompile>
     <ClCompile Include="CameraScript.cpp">
       <Filter>Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneInGame.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
