@@ -3,7 +3,8 @@
 enum class ComponentType : uint8
 {
 	Scene,
-	StaticMesh,
+	Primitive,
+	StaicMesh,
 	SkeletalMesh,
 	Camera,
 	Animator,

@@ -120,7 +120,7 @@ SceneComponentRef Actor::GetOrAddSceneComponent()
 
 PrimitiveComponentRef Actor::GetPrimitiveComponent()
 {
-	ComponentBaseRef component = GetFixedComponent(ComponentType::StaticMesh);
+	ComponentBaseRef component = GetFixedComponent(ComponentType::Primitive);
 
 	return std::static_pointer_cast<PrimitiveComponent>(component);
 }

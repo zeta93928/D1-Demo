@@ -68,3 +68,4 @@ MAKE_SHARED_REF(MonoBehaviour);
 MAKE_SHARED_REF(MeshAsset);
 MAKE_SHARED_REF(TextureAsset);
 MAKE_SHARED_REF(MaterialAsset);
+MAKE_SHARED_REF(Model);

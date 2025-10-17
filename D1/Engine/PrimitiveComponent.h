@@ -9,9 +9,10 @@ public:
 	virtual ~PrimitiveComponent();
 
 	virtual void Update() override;
+	virtual void LateUpdate() override;
 
 	void SetMeshAsset(MeshAssetRef mesh) { m_mesh = mesh; }
-	void SetMaterialAsset(MaterialAssetRef material) { m_material = material; }
+	void SetMaterialAsset(MaterialAssetRef material);
 
 private:
 	MeshAssetRef m_mesh;

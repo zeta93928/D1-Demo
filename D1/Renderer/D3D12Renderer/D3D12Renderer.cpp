@@ -4,6 +4,7 @@
 #include "DescriptorPool.h"
 #include "DescriptorAllocator.h"
 #include "ConstantBufferManager.h"
+#include "D3DUtils.h"
 
 D3D12Renderer* GRenderer = nullptr;
 

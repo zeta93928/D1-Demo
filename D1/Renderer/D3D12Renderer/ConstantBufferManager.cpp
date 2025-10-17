@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ConstantBufferManager.h"
 #include "ConstantBufferPool.h"
+#include "D3DUtils.h"
 
 ConstantBufferManager::~ConstantBufferManager()
 {

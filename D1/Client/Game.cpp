@@ -41,9 +41,9 @@ bool Game::Init()
 			material1->SetAlbedoMap(tex1);
 		}
 
-		for (uint32 r = 0; r < test_num; r++)
+		for (uint32 r = 0; r < (uint32)test_num; r++)
 		{
-			for (uint32 c = 0; c < test_num; c++)
+			for (uint32 c = 0; c < (uint32)test_num; c++)
 			{
 				meshActor = MakeShared<Actor>();
 				meshActor->GetOrAddSceneComponent()->SetPosition(Vector3(-test_num + (float)c * 2.f, 0.f, 0.f + (float)r * 5.f));
@@ -73,7 +73,6 @@ void Game::Update()
 
 void Game::Render()
 {
-	
 }
 
 void Game::Release()

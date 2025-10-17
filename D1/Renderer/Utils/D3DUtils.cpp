@@ -2,7 +2,7 @@
 #include <dxgi1_4.h>
 #include <d3d12.h>
 #include <d3dx12.h>
-#include "D3DUtil.h"
+#include "D3DUtils.h"
 
 namespace D3DUtils
 {

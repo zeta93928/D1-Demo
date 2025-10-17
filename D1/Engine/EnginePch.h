@@ -4,11 +4,19 @@
 #include <windows.h>
 #include <directxtex/directxtex.h>
 
+// Renderer Type
+#include "VertexData.h"
+
+// Interface
+#include "IRenderer.h"
+#include "IEngine.h"
+
+// Common
+#include "Types.h"
+#include "Struct.h"
+#include "Enum.h"
+
 // Inner
-#include "../Common/Types.h"
-#include "../Common/VertexData.h"
-#include "../Interface/IRenderer.h"
-#include "../Interface/IEngine.h"
 #include "EngineMacro.h"
 #include "EngineTypes.h"
 #include "EngineBody.h"
@@ -17,3 +25,6 @@
 #include "RenderProxy.h"
 #include "InputManager.h"
 #include "TimeManager.h"
+
+// Disable Warning
+#pragma warning(disable:4244)

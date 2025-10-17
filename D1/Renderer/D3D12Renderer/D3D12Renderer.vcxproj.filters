@@ -54,11 +54,8 @@
     <ClInclude Include="RendererMacro.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="..\Utils\D3DUtil.h">
+    <ClInclude Include="..\Utils\D3DUtils.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Common\VertexData.h">
-      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="D3D12Renderer.h">
       <Filter>RenderBody</Filter>
@@ -96,6 +93,15 @@
     <ClInclude Include="RendererEnum.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="RendererPch.h">
+      <Filter>Pch</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererStruct.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\VertexData.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -107,11 +113,8 @@
     <ClCompile Include="..\..\Common\SimpleMath.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Utils\D3DUtil.cpp">
+    <ClCompile Include="..\Utils\D3DUtils.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Common\VertexData.cpp">
-      <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="D3D12Renderer.cpp">
       <Filter>RenderBody</Filter>
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="StaticMeshRenderData.cpp">
       <Filter>RenderData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\VertexData.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

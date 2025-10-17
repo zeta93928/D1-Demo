@@ -131,7 +131,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\ThirdParty\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\ThirdParty\Include\;$(SolutionDir)..\Common\;$(SolutionDir)..\..\Interface\;$(SolutionDir)..\..\Common\;$(SolutionDir)..\Utils\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,6 +139,7 @@
       <EnableUAC>false</EnableUAC>
       <ProgramDatabaseFile>$(SolutionDir)..\..\Symbols\$(TargetName).pdb</ProgramDatabaseFile>
       <ModuleDefinitionFile>D3D12Renderer.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,7 +152,7 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\ThirdParty\Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\ThirdParty\Include\;$(SolutionDir)..\Common\;$(SolutionDir)..\..\Interface\;$(SolutionDir)..\..\Common\;$(SolutionDir)..\Utils\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,15 +160,16 @@
       <EnableUAC>false</EnableUAC>
       <ProgramDatabaseFile>$(SolutionDir)..\..\Symbols\$(TargetName).pdb</ProgramDatabaseFile>
       <ModuleDefinitionFile>D3D12Renderer.def</ModuleDefinitionFile>
+      <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Common\SimpleMath.h" />
     <ClInclude Include="..\..\Common\Struct.h" />
     <ClInclude Include="..\..\Common\Types.h" />
-    <ClInclude Include="..\..\Common\VertexData.h" />
     <ClInclude Include="..\..\Interface\IRenderer.h" />
-    <ClInclude Include="..\Utils\D3DUtil.h" />
+    <ClInclude Include="..\Common\VertexData.h" />
+    <ClInclude Include="..\Utils\D3DUtils.h" />
     <ClInclude Include="ConstantBufferManager.h" />
     <ClInclude Include="ConstantBufferPool.h" />
     <ClInclude Include="D3D12Renderer.h" />
@@ -178,14 +180,16 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="RendererMacro.h" />
     <ClInclude Include="RendererEnum.h" />
+    <ClInclude Include="RendererPch.h" />
+    <ClInclude Include="RendererStruct.h" />
     <ClInclude Include="SkeletalMeshRenderData.h" />
     <ClInclude Include="PrimitiveRenderData.h" />
     <ClInclude Include="StaticMeshRenderData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Common\SimpleMath.cpp" />
-    <ClCompile Include="..\..\Common\VertexData.cpp" />
-    <ClCompile Include="..\Utils\D3DUtil.cpp" />
+    <ClCompile Include="..\Common\VertexData.cpp" />
+    <ClCompile Include="..\Utils\D3DUtils.cpp" />
     <ClCompile Include="ConstantBufferManager.cpp" />
     <ClCompile Include="ConstantBufferPool.cpp" />
     <ClCompile Include="D3D12Renderer.cpp" />

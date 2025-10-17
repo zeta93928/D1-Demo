@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PrimitiveRenderData.h"
+#include "D3DUtils.h"
 
 ID3D12RootSignature* PrimitiveRenderData::sm_RootSig = nullptr;
 ID3D12PipelineState* PrimitiveRenderData::sm_PSO = nullptr;

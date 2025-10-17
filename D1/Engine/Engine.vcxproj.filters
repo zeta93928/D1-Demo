@@ -31,9 +31,6 @@
     <ClInclude Include="..\Common\Types.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\VertexData.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Interface\IRenderer.h">
       <Filter>Interface</Filter>
     </ClInclude>
@@ -87,6 +84,18 @@
     </ClInclude>
     <ClInclude Include="C:\Users\skdfw\Downloads\A-26)+ImGUI\Engine\tinyxml2.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Struct.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Enum.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +155,6 @@
     <ClCompile Include="..\Common\SimpleMath.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\VertexData.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="MeshAsset.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
@@ -190,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="C:\Users\skdfw\Downloads\A-26)+ImGUI\Engine\tinyxml2.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponent.cpp">
+      <Filter>Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

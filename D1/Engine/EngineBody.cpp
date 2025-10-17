@@ -111,6 +111,13 @@ void EngineBody::Tick()
 	TimeManager::Get().Update();
 	InputManager::Get().Update();
 
+	/*m_accTime += TimeManager::Get().GetDeltaTime();
+	
+	if (m_accTime >= 0.01666f)
+	{
+		m_accTime -= 0.01666f;
+	}*/
+
 	GRenderer->BeginRender();
 	{
 		m_gameDesc.app->Update();

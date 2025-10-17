@@ -18,25 +18,25 @@ public:
 	D3D12Renderer();
 	~D3D12Renderer();
 
-	virtual bool __stdcall Init(HWND hwnd, bool enableDebugLayer, bool enalbeGBV) override;
-	virtual void __stdcall Release() override;
+	virtual bool Init(HWND hwnd, bool enableDebugLayer, bool enalbeGBV) override;
+	virtual void Release() override;
 
-	virtual void __stdcall BeginRender() override;
-	virtual void __stdcall EndRender() override;
-	virtual void __stdcall Present() override;
+	virtual void BeginRender() override;
+	virtual void EndRender() override;
+	virtual void Present() override;
 
-	virtual bool __stdcall UpdateWindowSize(uint32 width, uint32 height) override;
+	virtual bool UpdateWindowSize(uint32 width, uint32 height) override;
 
-	IPrimitiveRenderData* __stdcall CreateStaticMeshRenderData() override;
-	ISkeletalMeshRenderData* __stdcall CreateSkeletalMeshRenderData() override;
+	IPrimitiveRenderData* CreateStaticMeshRenderData() override;
+	ISkeletalMeshRenderData* CreateSkeletalMeshRenderData() override;
 
-	virtual void __stdcall RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) override;
-	virtual void __stdcall RenderSkeletalMeshRenderData() override;
+	virtual void RenderStaticMeshRenderData(IPrimitiveRenderData* renderData) override;
+	virtual void RenderSkeletalMeshRenderData() override;
 
-	virtual void __stdcall SetGlobalRenderData(GlobalRenderData* globalData) override;
+	virtual void SetGlobalRenderData(GlobalRenderData* globalData) override;
 
-	virtual void* __stdcall	AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img) override;
-	virtual void __stdcall ReleaseTextureHandle(const WCHAR* name) override;
+	virtual void* AccessTextureHandle(const WCHAR* name, const DirectX::ScratchImage* img) override;
+	virtual void ReleaseTextureHandle(const WCHAR* name) override;
 
 public:
 	ID3D12Device5* GetDevice() { return m_device; }
@@ -70,14 +70,12 @@ private:
 	void WaitForFenceValue(uint64 expectedFenceValue);
 
 private:
-	// 한 프레임에 그려지는 오브젝트 수
-	// 이 값에 각 오브젝트 랜더 데이터의 Descipror 갯수를 곱한다
 	static const uint32 MAX_DRAW_COUNT_PER_FRAME = 2500;
 
-	// Texture 리소스를 Heap 에 바인딩 하기 위한 DescriptorAllcator 할당 크기
+	/* Desriptor Allocator 최대 갯수 */
 	static const uint32 MAX_DESCRIPTOR_COUNT = 4096;
 
-	// Global Constant Buffer Count
+	/* Gloabl Constant Buffer 갯수 */
 	static const uint32 MAX_GLOBAL_CONSTANT_BUFFER_COUNT = 1;
 
 	HWND m_hwnd = nullptr;

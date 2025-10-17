@@ -38,4 +38,5 @@ private:
 
 private:
 	GameDesc m_gameDesc = {};
+	float m_accTime = 0.f;
 };

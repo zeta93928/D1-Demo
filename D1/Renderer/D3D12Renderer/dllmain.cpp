@@ -11,9 +11,9 @@
 #pragma comment(lib, "d3dcompiler.lib")
 
 #ifdef _DEBUG
-#pragma comment(lib, "E:/D1-Demo/D1/ThirdParty/Libs/DirectXTex/DirectXTex_debug.lib")
+#pragma comment(lib, "../../ThirdParty/Libs/DirectXTex/DirectXTex_debug.lib")
 #else
-#pragma comment(lib, "../ThirdParty/Libs/DriectXTex/DirectXTex.lib")
+#pragma comment(lib, "../../ThirdParty/Libs/DriectXTex/DirectXTex.lib")
 #endif
 
 
